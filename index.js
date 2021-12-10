@@ -3,6 +3,8 @@ dotenv.config()
 
 import { Client, Intents } from 'discord.js'
 
+import { parseCommand } from './lib/parse_command.js'
+
 
 const {
   NODE_ENV,
@@ -26,6 +28,7 @@ bot.on('messageCreate', async (msg) => {
   if (author.id === DISCORD_CLIENT_ID) return
   if (channelId !== CHANNEL_ID) return
   if (!content.startsWith(SIGIL)) return
-  console.log(content)
+  const { command, args } = parseCommand(SIGIL, content)
+  console.log(command, args)
 })
 bot.login(DISCORD_TOKEN)
