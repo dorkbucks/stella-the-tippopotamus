@@ -4,6 +4,7 @@ dotenv.config()
 import { Client, Intents } from 'discord.js'
 
 import { parseCommand } from './lib/parse_command.js'
+import { Tip } from './commands/tip.js'
 
 
 const {
@@ -29,6 +30,7 @@ bot.on('messageCreate', async (msg) => {
   if (channelId !== CHANNEL_ID) return
   if (!content.startsWith(SIGIL)) return
   const { command, args } = parseCommand(SIGIL, content)
-  console.log(command, args)
+  const tip = new Tip(author.id, args)
+  console.log(tip)
 })
 bot.login(DISCORD_TOKEN)
