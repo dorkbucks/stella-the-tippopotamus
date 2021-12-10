@@ -9,6 +9,7 @@ const {
   DISCORD_CLIENT_ID,
   DISCORD_TOKEN,
   DISCORD_GUILD_ID,
+  SIGIL,
   CHANNEL_ID
 } = process.env
 
@@ -24,6 +25,7 @@ bot.on('messageCreate', async (msg) => {
   const { channelId, content, author } = msg
   if (author.id === DISCORD_CLIENT_ID) return
   if (channelId !== CHANNEL_ID) return
-  console.log(msg)
+  if (!content.startsWith(SIGIL)) return
+  console.log(content)
 })
 bot.login(DISCORD_TOKEN)
