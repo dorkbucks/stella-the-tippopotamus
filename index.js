@@ -3,8 +3,7 @@ dotenv.config()
 
 import { Client, Intents } from 'discord.js'
 
-import { parseCommand } from './lib/parse_command.js'
-import { commands } from './commands/index.js'
+import { parseCommand, commands } from './commands/index.js'
 
 
 const {
