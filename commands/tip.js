@@ -1,5 +1,11 @@
+import Big from 'big.js'
+
+import { Account } from '../lib/account.js'
+import { tokens } from '../tokens/index.js'
 import { expandSuffixedNum } from '../lib/expand_suffixed_num.js'
 
+
+const TOKENS = tokens.list()
 
 export class Tip {
   constructor (fromID, args) {
@@ -21,5 +27,40 @@ export class Tip {
       }
       return obj
     }, {})
+  }
+
+  async call () {
+    const { fromID, toIDs, amount, modifier } = this
+    let { token } = this
+
+    const [from, ...to] = await Promise.all(
+      [fromID, ...toIDs].map(id => Account.getOrCreate(id, TOKENS))
+    )
+
+    token = tokens.get(token, 'name')
+    let totalAmount
+    if (isAll) {
+      totalAmount = from.balances[token]
+    } else if (isEach) {
+      totalAmount = +Big(amount).times(toIDs.length)
+    } else {
+      totalAmount = amount
+    }
+
+    if (!from.balanceSufficient(token, totalAmount)) {
+      return 'Balance insufficient'
+    }
+
+    let updatedFrom = from.debit(token, totalAmount)
+    let updatedTo = to.map(t => t.credit(token, amount))
+
+    ;[updatedFrom, ...updatedTo] = await Promise.all(
+      [updatedFrom, ...updatedTo].map(account => account.save())
+    )
+
+    return {
+      from: updatedFrom,
+      to: updatedTo
+    }
   }
 }

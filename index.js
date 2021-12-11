@@ -32,6 +32,7 @@ bot.on('messageCreate', async (msg) => {
   const Command = commands.get(command)
   if (!Command) return
   const cmd = new Command(author.id, args)
-  console.log(cmd)
+  const result = await cmd.call()
+  console.log(JSON.stringify(result, null, 2))
 })
 bot.login(DISCORD_TOKEN)
