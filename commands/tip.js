@@ -52,7 +52,7 @@ export class Tip {
     }
 
     let updatedFrom = from.debit(token, totalAmount)
-    let updatedTo = to.map(t => t.credit(token, amount))
+    let updatedTo = to.map(t => t.credit(token, amountPer))
 
     ;[updatedFrom, ...updatedTo] = await Promise.all(
       [updatedFrom, ...updatedTo].map(account => account.save())
