@@ -38,13 +38,13 @@ export class Tip {
     )
 
     token = tokens.get(token, 'name')
-    let totalAmount
-    if (isAll) {
-      totalAmount = from.balances[token]
-    } else if (isEach) {
-      totalAmount = +Big(amount).times(toIDs.length)
+    let totalAmount, amountPer
+    if (isEach) {
+      totalAmount = +Big(amount).times(to.length)
+      amountPer = amount
     } else {
-      totalAmount = amount
+      totalAmount = isAll ? from.balances[token] : amount
+      amountPer = +Big(totalAmount).div(to.length)
     }
 
     if (!from.balanceSufficient(token, totalAmount)) {
