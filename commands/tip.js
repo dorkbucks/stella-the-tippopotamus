@@ -33,6 +33,17 @@ export class Tip {
   async call () {
     const { fromID, toIDs, amount, modifier } = this
     const token = tokens.get(this.token, 'name')
+    const { emoji } = tokens.get(token, 'logo')
+
+    const isAll = amount === 'all'
+    const isEach = modifier === 'each' && toIDs.length > 1
+    if (isAll && isEach) {
+      return {
+        message: {
+          body: `You can't tip **all** of your ${emoji} ${token} to **each** person`
+        }
+      }
+    }
 
     const [from, ...to] = await Promise.all(
       [fromID, ...toIDs].map(id => Account.getOrCreate(id, TOKENS))
@@ -63,7 +74,6 @@ export class Tip {
       amountSent = `**${amountPer} ${token} each**`
     }
     const tos = lf.format(toIDs.map(id => `<@${id}>`))
-    const { emoji } = tokens.get(token, 'logo')
 
     return {
       from: updatedFrom,
