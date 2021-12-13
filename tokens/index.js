@@ -1,10 +1,12 @@
 import { DorkBucks } from './dorkbucks.js'
 import { Ananos } from './ananos.js'
+import { Manangos } from './manangos.js'
 
 
 const TOKENS = [
   DorkBucks,
-  Ananos
+  Ananos,
+  Manangos
 ]
 
 const lc = t => t.toLowerCase()
