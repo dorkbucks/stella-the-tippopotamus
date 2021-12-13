@@ -59,7 +59,7 @@ export class Tip {
     }
 
     if (!from.balanceSufficient(token, totalAmount)) {
-      return 'Balance insufficient'
+      return { message: { body: `You can't afford this tip` } }
     }
 
     let updatedFrom = from.debit(token, totalAmount)
