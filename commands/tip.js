@@ -31,13 +31,12 @@ export class Tip {
 
   async call () {
     const { fromID, toIDs, amount, modifier } = this
-    let { token } = this
+    const token = tokens.get(this.token, 'name')
 
     const [from, ...to] = await Promise.all(
       [fromID, ...toIDs].map(id => Account.getOrCreate(id, TOKENS))
     )
 
-    token = tokens.get(token, 'name')
     let totalAmount, amountPer
     if (isEach) {
       totalAmount = +Big(amount).times(to.length)
