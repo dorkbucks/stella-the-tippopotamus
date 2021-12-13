@@ -6,6 +6,7 @@ import { expandSuffixedNum } from '../lib/expand_suffixed_num.js'
 
 
 const TOKENS = tokens.list()
+const lf = new Intl.ListFormat('en')
 
 export class Tip {
   constructor (fromID, args) {
@@ -57,9 +58,15 @@ export class Tip {
       [updatedFrom, ...updatedTo].map(account => account.save())
     )
 
+    const tos = lf.format(toIDs.map(id => `<@${id}>`))
+    const { emoji } = tokens.get(token, 'logo')
+
     return {
       from: updatedFrom,
-      to: updatedTo
+      to: updatedTo,
+      message: {
+        body: `<@${fromID}> sent **${totalAmount} ${token}** ${emoji} to ${tos}`
+      }
     }
   }
 }
