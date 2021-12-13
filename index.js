@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 dotenv.config()
 
-import { Client, Intents } from 'discord.js'
+import { Client, Intents, MessageEmbed } from 'discord.js'
 
 import { parseCommand, commands } from './commands/index.js'
 
@@ -33,6 +33,17 @@ bot.on('messageCreate', async (msg) => {
   if (!Command) return
   const cmd = new Command(author.id, args)
   const result = await cmd.call()
-  console.log(JSON.stringify(result, null, 2))
+  const {
+    heading='',
+    icon='',
+    body,
+    footer=''
+  } = result.message
+  const embed = new MessageEmbed()
+        .setColor('#ff9900')
+        .setAuthor(heading, icon)
+        .setDescription(body)
+        .setFooter(footer)
+  msg.reply({ embeds: [embed] })
 })
 bot.login(DISCORD_TOKEN)
