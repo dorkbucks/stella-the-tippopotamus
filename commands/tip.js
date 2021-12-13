@@ -1,5 +1,6 @@
 import Big from 'big.js'
 
+import { uniquify } from '../lib/uniquify.js'
 import { Account } from '../lib/account.js'
 import { tokens } from '../tokens/index.js'
 import { expandSuffixedNum } from '../lib/expand_suffixed_num.js'
@@ -32,8 +33,7 @@ export class Tip {
 
   async call () {
     const { fromID, amount, modifier } = this
-    // Uniquify toIDs if more than one ID
-    const toIDs = this.toIDs.length > 1 ? [...new Set(this.toIDs)]: this.toIDs
+    const toIDs = this.toIDs.length > 1 ? uniquify(this.toIDs): this.toIDs
     const token = tokens.get(this.token, 'name')
     const { emoji } = tokens.get(token, 'logo')
 
