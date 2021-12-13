@@ -31,7 +31,9 @@ export class Tip {
   }
 
   async call () {
-    const { fromID, toIDs, amount, modifier } = this
+    const { fromID, amount, modifier } = this
+    // Uniquify toIDs if more than one ID
+    const toIDs = this.toIDs.length > 1 ? [...new Set(this.toIDs)]: this.toIDs
     const token = tokens.get(this.token, 'name')
     const { emoji } = tokens.get(token, 'logo')
 
