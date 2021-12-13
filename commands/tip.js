@@ -58,6 +58,10 @@ export class Tip {
       [updatedFrom, ...updatedTo].map(account => account.save())
     )
 
+    let amountSent = `**${totalAmount} ${token}**`
+    if (isEach || amountPer < amount) {
+      amountSent = `**${amountPer} ${token} each**`
+    }
     const tos = lf.format(toIDs.map(id => `<@${id}>`))
     const { emoji } = tokens.get(token, 'logo')
 
@@ -65,7 +69,7 @@ export class Tip {
       from: updatedFrom,
       to: updatedTo,
       message: {
-        body: `<@${fromID}> sent **${totalAmount} ${token}** ${emoji} to ${tos}`
+        body: `<@${fromID}> sent ${emoji} ${amountSent} to ${tos}`
       }
     }
   }
