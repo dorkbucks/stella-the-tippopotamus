@@ -37,6 +37,10 @@ export class Tip {
     const token = tokens.get(this.token, 'name')
     const { emoji } = tokens.get(token, 'logo')
 
+    if (toIDs.includes(fromID)) {
+      return { message: { body: `You can't tip yourself` } }
+    }
+
     const isAll = amount === 'all'
     const isEach = modifier === 'each' && toIDs.length > 1
     if (isAll && isEach) {
