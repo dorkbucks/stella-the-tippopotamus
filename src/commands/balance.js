@@ -9,8 +9,8 @@ export class Balance {
     this.account = account
   }
 
-  async call () {
-    const { username, avatar, balances } = await Account.getOrCreate(this.account, TOKENS)
+  call () {
+    const { username, avatar, balances } = this.account
     return {
       message: {
         heading: `${username}'s balances`,
