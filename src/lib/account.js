@@ -1,4 +1,4 @@
-import Big from 'big.js'
+import BigNumber from 'bignumber.js'
 import Datastore from 'nedb-promises'
 
 import { bot } from './bot.js'
@@ -37,18 +37,18 @@ export class Account {
 
   credit (token, amount) {
     const balances = { ...this.balances }
-    balances[token] = +Big(balances[token]).plus(amount)
+    balances[token] = +BigNumber(balances[token]).plus(amount)
     return new Account({ ...this, balances })
   }
 
   debit (token, amount) {
     const balances = { ...this.balances }
-    balances[token] = +Big(balances[token]).minus(amount)
+    balances[token] = +BigNumber(balances[token]).minus(amount)
     return new Account({ ...this, balances })
   }
 
   balanceSufficient (token, amount) {
-    return Big(this.balances[token]).gte(amount)
+    return BigNumber(this.balances[token]).gte(amount)
   }
 
   async save () {

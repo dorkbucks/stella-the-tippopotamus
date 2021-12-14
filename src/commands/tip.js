@@ -1,4 +1,4 @@
-import Big from 'big.js'
+import BigNumber from 'bignumber.js'
 
 import { uniquify } from '../lib/uniquify.js'
 import { Account } from '../lib/account.js'
@@ -57,14 +57,14 @@ export class Tip {
 
     let totalAmount, amountPer
     if (isEach) {
-      totalAmount = +Big(amount).times(to.length)
-      amountPer = amount
+      totalAmount = BigNumber(amount).times(recipients.length)
+      amountPer = BigNumber(amount)
     } else {
-      totalAmount = isAll ? from.balances[token] : amount
-      amountPer = +Big(totalAmount).div(to.length)
       if (totalAmount.lte(0)) {
         return { message: { body: `You can't tip **≤ 0**`} }
       }
+      totalAmount = BigNumber(isAll ? from.balances[token] : amount)
+      amountPer = BigNumber(totalAmount).div(recipients.length)
 
       if (!senderAccount.balanceSufficient(token, totalAmount)) {
         return { message: { body: `You can't afford this tip` } }

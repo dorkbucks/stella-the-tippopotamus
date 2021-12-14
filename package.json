@@ -9,7 +9,7 @@
     "test": "tap"
   },
   "dependencies": {
-    "big.js": "6.1.1",
+    "bignumber.js": "9.0.2",
     "discord.js": "13.3.1",
     "dotenv": "10.0.0",
     "nedb-promises": "5.0.2"
