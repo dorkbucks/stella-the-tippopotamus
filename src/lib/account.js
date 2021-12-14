@@ -7,17 +7,14 @@ const accountsDB = Datastore.create(new URL('../var/accounts.db', import.meta.ur
 
 export class Account {
   static async getOrCreate (acctData, tokens) {
-    const o = Object.assign({}, acctData)
-    o['_id'] = o.id
-    delete o.id
-    let account = await accountsDB.findOne({ _id: o._id })
+    let account = await accountsDB.findOne({ _id: acctData.id })
     if (account) {
       return new Account(account, tokens)
     } else {
-      const user = await bot.users.fetch(o._id)
-      o.username = user.username
-      o.avatar = user.avatarURL()
-      account = new Account(o, tokens)
+      const user = await bot.users.fetch(acctData.id)
+      const username = user.username
+      const avatar = user.avatarURL()
+      account = new Account({ ...acctData, username, avatar }, tokens)
       await accountsDB.insert(account)
       return account
     }
@@ -28,6 +25,8 @@ export class Account {
       this._id = objOrID
     } else {
       Object.assign(this, objOrID)
+      this._id = this._id || this.id
+      delete this.id
     }
 
     this.balances = this.balances || tokens.reduce((bals, token) => {
