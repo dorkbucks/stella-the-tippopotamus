@@ -17,7 +17,7 @@ export class Balance {
         icon: avatar,
         body: Object.keys(balances).sort((a, b) => a.localeCompare(b)).reduce((str, name) => {
           const { emoji } = tokens.get(name, 'logo')
-          const bal = (+balances[name]).toLocaleString()
+          const bal = balances[name].toFormat()
           return `${str}\n${emoji} **${name}**: ${bal}`
         }, '')
       }
