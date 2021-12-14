@@ -25,7 +25,12 @@ bot.on('messageCreate', async (msg) => {
   const { command, args } = parseCommand(SIGIL, content)
   const Command = commands.get(command)
   if (!Command) return
-  const cmd = new Command(author.id, args)
+  const account = {
+    id: author.id,
+    username: author.username,
+    avatar: author.avatarURL()
+  }
+  const cmd = new Command(account, args)
   const result = await cmd.call()
   const {
     heading='',
