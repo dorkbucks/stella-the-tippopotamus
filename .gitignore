@@ -1,2 +1,3 @@
 .env
 var/
+.nyc_output/
