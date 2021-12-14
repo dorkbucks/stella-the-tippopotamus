@@ -3,6 +3,7 @@ dotenv.config()
 
 import { Client, Intents, MessageEmbed } from 'discord.js'
 
+import { bot } from './lib/bot.js'
 import { parseCommand, commands } from './commands/index.js'
 
 
@@ -14,13 +15,6 @@ const {
   SIGIL,
   CHANNEL_ID
 } = process.env
-
-const bot = new Client({
-  intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_MESSAGES
-  ]
-})
 
 bot.once('ready', () => console.log(`Tipbot logged in as ${DISCORD_CLIENT_ID}`))
 bot.on('messageCreate', async (msg) => {
