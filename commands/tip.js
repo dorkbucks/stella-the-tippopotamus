@@ -10,8 +10,8 @@ const TOKENS = tokens.list()
 const lf = new Intl.ListFormat('en')
 
 export class Tip {
-  constructor (fromID, args) {
-    Object.assign(this, this.parseArgs(args), { fromID })
+  constructor (sender, args) {
+    Object.assign(this, this.parseArgs(args), { sender })
   }
 
   parseArgs (args) {
@@ -32,12 +32,12 @@ export class Tip {
   }
 
   async call () {
-    const { fromID, amount, modifier } = this
     const toIDs = this.toIDs.length > 1 ? uniquify(this.toIDs): this.toIDs
+    const { sender, amount, modifier } = this
     const token = tokens.get(this.token, 'name')
     const { emoji } = tokens.get(token, 'logo')
 
-    if (toIDs.includes(fromID)) {
+    if (toIDs.includes(sender.id)) {
       return { message: { body: `You can't tip yourself` } }
     }
 
@@ -51,8 +51,8 @@ export class Tip {
       }
     }
 
-    const [from, ...to] = await Promise.all(
-      [fromID, ...toIDs].map(id => Account.getOrCreate(id, TOKENS))
+    const [senderAccount, ...to] = await Promise.all(
+      [sender, ...toIds].map(o => Account.getOrCreate(o, TOKENS))
     )
 
     let totalAmount, amountPer
@@ -64,15 +64,15 @@ export class Tip {
       amountPer = +Big(totalAmount).div(to.length)
     }
 
-    if (!from.balanceSufficient(token, totalAmount)) {
+    if (!senderAccount.balanceSufficient(token, totalAmount)) {
       return { message: { body: `You can't afford this tip` } }
     }
 
-    let updatedFrom = from.debit(token, totalAmount)
     let updatedTo = to.map(t => t.credit(token, amountPer))
+    let updatedSenderAccount = senderAccount.debit(token, totalAmount)
 
-    ;[updatedFrom, ...updatedTo] = await Promise.all(
-      [updatedFrom, ...updatedTo].map(account => account.save())
+    ;[updatedSenderAccount, ...updatedTo] = await Promise.all(
+      [updatedSenderAccount, ...updatedTo].map(account => account.save())
     )
 
     let amountSent = `**${totalAmount} ${token}**`
@@ -85,7 +85,7 @@ export class Tip {
       from: updatedFrom,
       to: updatedTo,
       message: {
-        body: `<@${fromID}> sent ${emoji} ${amountSent} to ${tos}`
+        body: `<@${sender.id}> sent ${emoji} ${amountSent} to ${tos}`
       }
     }
   }
