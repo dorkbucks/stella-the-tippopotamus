@@ -44,11 +44,15 @@ test('Constructor works with object', (t) => {
 })
 
 test('balances', (t) => {
-  const o = { id: '1234' }
-  const acct = new Account(o, TOKENS)
-  t.ok(BigNumber.isBigNumber(acct.balances.BTC), 'Should be BigNumber instance')
-  t.ok(BigNumber.isBigNumber(acct.balances.ETH), 'Should be BigNumber instance')
-  t.ok(BigNumber.isBigNumber(acct.balances.XLM), 'Should be BigNumber instance')
+
+  t.test('"New" account', (_t) => {
+    const o = { id: '1234' }
+    const acct = new Account(o, TOKENS)
+    t.ok(BigNumber.isBigNumber(acct.balances[TOKENS[0]]), 'Should be a BigNumber instance')
+    t.ok(BigNumber.isBigNumber(acct.balances[TOKENS[1]]), 'Should be a BigNumber instance')
+    t.ok(BigNumber.isBigNumber(acct.balances[TOKENS[2]]), 'Should be a BigNumber instance')
+    _t.end()
+  })
   t.end()
 })
 
