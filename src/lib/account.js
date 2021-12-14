@@ -30,7 +30,7 @@ export class Account {
     }
 
     this.balances = this.balances || tokens.reduce((bals, token) => {
-      bals[token] = 0
+      bals[token] = BigNumber(0)
       return bals
     }, {})
   }

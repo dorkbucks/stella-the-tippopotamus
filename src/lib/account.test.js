@@ -1,4 +1,5 @@
 import { test } from 'tap'
+import BigNumber from 'bignumber.js'
 
 import { Account } from './account.js'
 
@@ -19,7 +20,6 @@ test('Constructor works with id string', (t) => {
   const id = '1234'
   const acct = new Account(id, TOKENS)
   t.equal(id, acct._id)
-  t.same(balances, acct.balances)
   t.end()
 })
 
@@ -34,7 +34,6 @@ test('Constructor works with object', (t) => {
   t.notOk(acct.id, `Saves .id as ._id`)
   t.equal(obj.username, acct.username)
   t.equal(obj.avatar, acct.avatar)
-  t.same(balances, acct.balances)
 
   const obj2 = { _id: '1234' }
   const acct2 = new Account(obj2, TOKENS)
@@ -44,13 +43,22 @@ test('Constructor works with object', (t) => {
   t.end()
 })
 
+test('balances', (t) => {
+  const o = { id: '1234' }
+  const acct = new Account(o, TOKENS)
+  t.ok(BigNumber.isBigNumber(acct.balances.BTC), 'Should be BigNumber instance')
+  t.ok(BigNumber.isBigNumber(acct.balances.ETH), 'Should be BigNumber instance')
+  t.ok(BigNumber.isBigNumber(acct.balances.XLM), 'Should be BigNumber instance')
+  t.end()
+})
+
 test('#credit', (t) => {
   const token = TOKENS[0]
   const amount = 100
   const acct = new Account('1', TOKENS)
   const acctAfter = acct.credit(token, amount)
   t.notSame(acct, acctAfter, `Creates new account object`)
-  t.equal(0, acct.balances[token], `Doesn't mutate original object's balances`)
+  t.equal(0, acct.balances[token].toNumber(), `Doesn't mutate original object's balances`)
   t.equal(amount, acctAfter.balances[token], `Creates new object w/ new balances`)
   t.end()
 })
@@ -59,8 +67,9 @@ test('#debit', (t) => {
   const token = TOKENS[0]
   const amount = 100
   const balance = 1000
-  const acct = new Account('1', TOKENS)
+  let acct = new Account('1', TOKENS)
   acct.balances[token] = balance
+  // acct = acct.credit(token, balance)
   const acctAfter = acct.debit(token, amount)
   t.notSame(acct, acctAfter, `Creates new account object`)
   t.equal(balance, acct.balances[token], `Doesn't mutate original object's balances`)
