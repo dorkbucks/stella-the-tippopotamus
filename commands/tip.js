@@ -19,7 +19,7 @@ export class Tip {
       val = val.toLowerCase()
       const user = val.match(/^<@!?(?<id>\d{17,19})>$/)
       if (user) {
-        obj.toIDs = [...(obj.toIDs || []), user.groups.id]
+        obj.recipientIDs = [...(obj.recipientIDs || []), user.groups.id]
       } else if (/^\d?.?\d+[k|m|b]?$|all?\b/i.test(val)) {
         obj.amount = val === 'all' ? val : expandSuffixedNum(val)
       } else if (val === 'each') {
@@ -32,17 +32,17 @@ export class Tip {
   }
 
   async call () {
-    const toIDs = this.toIDs.length > 1 ? uniquify(this.toIDs): this.toIDs
     const { sender, amount, modifier } = this
+    const recipients = uniquify(this.recipientIDs).map(id => ({ id }))
     const token = tokens.get(this.token, 'name')
     const { emoji } = tokens.get(token, 'logo')
 
-    if (toIDs.includes(sender.id)) {
+    if (this.recipientIDs.includes(sender.id)) {
       return { message: { body: `You can't tip yourself` } }
     }
 
     const isAll = amount === 'all'
-    const isEach = modifier === 'each' && toIDs.length > 1
+    const isEach = modifier === 'each' && recipients.length > 1
     if (isAll && isEach) {
       return {
         message: {
@@ -51,8 +51,8 @@ export class Tip {
       }
     }
 
-    const [senderAccount, ...to] = await Promise.all(
-      [sender, ...toIds].map(o => Account.getOrCreate(o, TOKENS))
+    const [senderAccount, ...recipientAccounts] = await Promise.all(
+      [sender, ...recipients].map(o => Account.getOrCreate(o, TOKENS))
     )
 
     let totalAmount, amountPer
@@ -68,18 +68,18 @@ export class Tip {
       return { message: { body: `You can't afford this tip` } }
     }
 
-    let updatedTo = to.map(t => t.credit(token, amountPer))
     let updatedSenderAccount = senderAccount.debit(token, totalAmount)
+    let updatedRecipientAccounts = recipientAccounts.map(account => account.credit(token, amountPer))
 
-    ;[updatedSenderAccount, ...updatedTo] = await Promise.all(
-      [updatedSenderAccount, ...updatedTo].map(account => account.save())
+    ;[updatedSenderAccount, ...updatedRecipientAccounts] = await Promise.all(
+      [updatedSenderAccount, ...updatedRecipientAccounts].map(account => account.save())
     )
 
     let amountSent = `**${totalAmount} ${token}**`
     if (isEach || amountPer < amount) {
       amountSent = `**${amountPer} ${token} each**`
     }
-    const tos = lf.format(toIDs.map(id => `<@${id}>`))
+    const tos = lf.format(recipients.map(({ id }) => `<@${id}>`))
 
     return {
       from: updatedFrom,
