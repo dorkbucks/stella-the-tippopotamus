@@ -53,6 +53,27 @@ test('balances', (t) => {
     t.ok(BigNumber.isBigNumber(acct.balances[TOKENS[2]]), 'Should be a BigNumber instance')
     _t.end()
   })
+
+  t.test('"Existing" account', (_t) => {
+    // Reinstantiate BigNumber instances, i.e retrieving from a db
+    const _acct = {
+      _id: '1234',
+      balances: {
+        // Simulate what a BigNumber object looks like after retrieval from a db
+        [TOKENS[0]]: { ...BigNumber(100) },
+        [TOKENS[1]]: { ...BigNumber(100) },
+        [TOKENS[2]]: { ...BigNumber(100) }
+      }
+    }
+
+    const acct = new Account(_acct, TOKENS)
+    t.ok(BigNumber.isBigNumber(acct.balances[TOKENS[0]]), 'Should be a BigNumber instance')
+    t.ok(BigNumber.isBigNumber(acct.balances[TOKENS[1]]), 'Should be a BigNumber instance')
+    t.ok(BigNumber.isBigNumber(acct.balances[TOKENS[2]]), 'Should be a BigNumber instance')
+
+    _t.end()
+  })
+
   t.end()
 })
 

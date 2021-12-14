@@ -29,10 +29,18 @@ export class Account {
       delete this.id
     }
 
-    this.balances = this.balances || tokens.reduce((bals, token) => {
-      bals[token] = BigNumber(0)
-      return bals
-    }, {})
+    if (this.balances) {
+      // Reinstantiate BigNumber instances, i.e after retrieving from a db
+      this.balances = Object.entries(this.balances).reduce((bals, [token, value]) => {
+        bals[token] = BigNumber({ ...value, _isBigNumber: true })
+        return bals
+      }, {})
+    } else {
+      this.balances = tokens.reduce((bals, token) => {
+        bals[token] = BigNumber(0)
+        return bals
+      }, {})
+    }
   }
 
   credit (token, amount) {
