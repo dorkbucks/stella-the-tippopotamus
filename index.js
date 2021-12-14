@@ -5,6 +5,8 @@ import { Client, Intents, MessageEmbed } from 'discord.js'
 
 import { bot } from './src/lib/bot.js'
 import { parseCommand, commands } from './src/commands/index.js'
+import { tokens } from './src/tokens/index.js'
+import { Account } from './src/lib/account.js'
 
 
 const {
@@ -16,6 +18,8 @@ const {
   CHANNEL_ID
 } = process.env
 
+const TOKENS = tokens.list('name')
+
 bot.once('ready', () => console.log(`Tipbot logged in as ${DISCORD_CLIENT_ID}`))
 bot.on('messageCreate', async (msg) => {
   const { channelId, content, author } = msg
@@ -25,11 +29,11 @@ bot.on('messageCreate', async (msg) => {
   const { command, args } = parseCommand(SIGIL, content)
   const Command = commands.get(command)
   if (!Command) return
-  const account = {
+  const account = await Account.getOrCreate({
     id: author.id,
     username: author.username,
     avatar: author.avatarURL()
-  }
+  }, TOKENS)
   const cmd = new Command(account, args)
   const result = await cmd.call()
   const {
