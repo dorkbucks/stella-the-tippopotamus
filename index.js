@@ -3,8 +3,8 @@ dotenv.config()
 
 import { Client, Intents, MessageEmbed } from 'discord.js'
 
-import { bot } from './lib/bot.js'
-import { parseCommand, commands } from './commands/index.js'
+import { bot } from './src/lib/bot.js'
+import { parseCommand, commands } from './src/commands/index.js'
 
 
 const {

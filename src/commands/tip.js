@@ -62,32 +62,33 @@ export class Tip {
     } else {
       totalAmount = isAll ? from.balances[token] : amount
       amountPer = +Big(totalAmount).div(to.length)
-    if (totalAmount.lte(0)) {
-      return { message: { body: `You can't tip **≤ 0**`} }
-    }
+      if (totalAmount.lte(0)) {
+        return { message: { body: `You can't tip **≤ 0**`} }
+      }
 
-    if (!senderAccount.balanceSufficient(token, totalAmount)) {
-      return { message: { body: `You can't afford this tip` } }
-    }
+      if (!senderAccount.balanceSufficient(token, totalAmount)) {
+        return { message: { body: `You can't afford this tip` } }
+      }
 
-    let updatedSenderAccount = senderAccount.debit(token, totalAmount)
-    let updatedRecipientAccounts = recipientAccounts.map(account => account.credit(token, amountPer))
+      let updatedSenderAccount = senderAccount.debit(token, totalAmount)
+      let updatedRecipientAccounts = recipientAccounts.map(account => account.credit(token, amountPer))
 
-    ;[updatedSenderAccount, ...updatedRecipientAccounts] = await Promise.all(
-      [updatedSenderAccount, ...updatedRecipientAccounts].map(account => account.save())
-    )
+      ;[updatedSenderAccount, ...updatedRecipientAccounts] = await Promise.all(
+        [updatedSenderAccount, ...updatedRecipientAccounts].map(account => account.save())
+      )
 
-    let amountSent = `**${totalAmount} ${token}**`
-    if (isEach || amountPer < amount) {
-      amountSent = `**${amountPer} ${token} each**`
-    }
-    const tos = lf.format(recipients.map(({ id }) => `<@${id}>`))
+      let amountSent = `**${totalAmount} ${token}**`
+      if (isEach || amountPer < amount) {
+        amountSent = `**${amountPer} ${token} each**`
+      }
+      const tos = lf.format(recipients.map(({ id }) => `<@${id}>`))
 
-    return {
-      from: updatedFrom,
-      to: updatedTo,
-      message: {
-        body: `<@${sender.id}> sent ${emoji} ${amountSent} to ${tos}`
+      return {
+        from: updatedFrom,
+        to: updatedTo,
+        message: {
+          body: `<@${sender.id}> sent ${emoji} ${amountSent} to ${tos}`
+        }
       }
     }
   }
