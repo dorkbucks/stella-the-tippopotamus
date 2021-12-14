@@ -60,35 +60,34 @@ export class Tip {
       totalAmount = BigNumber(amount).times(recipients.length)
       amountPer = BigNumber(amount)
     } else {
-      if (totalAmount.lte(0)) {
-        return { message: { body: `You can't tip **≤ 0**`} }
-      }
       totalAmount = BigNumber(isAll ? from.balances[token] : amount)
       amountPer = BigNumber(totalAmount).div(recipients.length)
+    }
 
-      if (!senderAccount.balanceSufficient(token, totalAmount)) {
-        return { message: { body: `You can't afford this tip` } }
-      }
+    if (totalAmount.lte(0)) {
+      return { message: { body: `You can't tip **≤ 0**`} }
+    }
 
-      let updatedSenderAccount = senderAccount.debit(token, totalAmount)
-      let updatedRecipientAccounts = recipientAccounts.map(account => account.credit(token, amountPer))
+    if (!senderAccount.balanceSufficient(token, totalAmount)) {
+      return { message: { body: `You can't afford this tip` } }
+    }
 
-      ;[updatedSenderAccount, ...updatedRecipientAccounts] = await Promise.all(
-        [updatedSenderAccount, ...updatedRecipientAccounts].map(account => account.save())
-      )
+    let updatedSenderAccount = senderAccount.debit(token, totalAmount)
+    let updatedRecipientAccounts = recipientAccounts.map(account => account.credit(token, amountPer))
 
-      let amountSent = `**${totalAmount} ${token}**`
-      if (isEach || amountPer < amount) {
-        amountSent = `**${amountPer} ${token} each**`
-      }
-      const tos = lf.format(recipients.map(({ id }) => `<@${id}>`))
+    ;[updatedSenderAccount, ...updatedRecipientAccounts] = await Promise.all(
+      [updatedSenderAccount, ...updatedRecipientAccounts].map(account => account.save())
+    )
 
-      return {
-        from: updatedFrom,
-        to: updatedTo,
-        message: {
-          body: `<@${sender.id}> sent ${emoji} ${amountSent} to ${tos}`
-        }
+    let amountSent = `**${totalAmount} ${token}**`
+    if (isEach || amountPer < amount) {
+      amountSent = `**${amountPer} ${token} each**`
+    }
+    const tos = lf.format(recipients.map(({ id }) => `<@${id}>`))
+
+    return {
+      message: {
+        body: `<@${sender.id}> sent ${emoji} ${amountSent} to ${tos}`
       }
     }
   }
