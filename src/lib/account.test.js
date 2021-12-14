@@ -59,7 +59,8 @@ test('#credit', (t) => {
   const acctAfter = acct.credit(token, amount)
   t.notSame(acct, acctAfter, `Creates new account object`)
   t.equal(0, acct.balances[token].toNumber(), `Doesn't mutate original object's balances`)
-  t.equal(amount, acctAfter.balances[token], `Creates new object w/ new balances`)
+  t.ok(BigNumber.isBigNumber(acctAfter.balances[token]), 'Should be a BigNumber instance')
+  t.equal(amount, acctAfter.balances[token].toNumber(), `Creates new object w/ new balances`)
   t.end()
 })
 
@@ -68,12 +69,12 @@ test('#debit', (t) => {
   const amount = 100
   const balance = 1000
   let acct = new Account('1', TOKENS)
-  acct.balances[token] = balance
-  // acct = acct.credit(token, balance)
+  acct = acct.credit(token, balance)
   const acctAfter = acct.debit(token, amount)
   t.notSame(acct, acctAfter, `Creates new account object`)
-  t.equal(balance, acct.balances[token], `Doesn't mutate original object's balances`)
-  t.equal(balance - amount, acctAfter.balances[token], `Creates new object w/ new balances`)
+  t.equal(balance, acct.balances[token].toNumber(), `Doesn't mutate original object's balances`)
+  t.ok(BigNumber.isBigNumber(acctAfter.balances[token]), 'Should be a BigNumber instance')
+  t.equal(balance - amount, acctAfter.balances[token].toNumber(), `Creates new object w/ new balances`)
   t.end()
 })
 

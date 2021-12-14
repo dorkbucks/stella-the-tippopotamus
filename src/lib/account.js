@@ -37,13 +37,13 @@ export class Account {
 
   credit (token, amount) {
     const balances = { ...this.balances }
-    balances[token] = +BigNumber(balances[token]).plus(amount)
+    balances[token] = balances[token].plus(amount)
     return new Account({ ...this, balances })
   }
 
   debit (token, amount) {
     const balances = { ...this.balances }
-    balances[token] = +BigNumber(balances[token]).minus(amount)
+    balances[token] = balances[token].minus(amount)
     return new Account({ ...this, balances })
   }
 
