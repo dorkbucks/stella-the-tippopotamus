@@ -1,5 +1,4 @@
-import BigNumber from 'bignumber.js'
-
+import BigNumber from '../lib/bignumber.js'
 import { uniquify } from '../lib/uniquify.js'
 import { Account } from '../lib/account.js'
 import { tokens } from '../tokens/index.js'

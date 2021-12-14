@@ -1,6 +1,6 @@
 import { test } from 'tap'
-import BigNumber from 'bignumber.js'
 
+import BigNumber from '../lib/bignumber.js'
 import { tokens } from '../tokens/index.js'
 import { Account } from '../lib/account.js'
 import { Balance } from './balance.js'
