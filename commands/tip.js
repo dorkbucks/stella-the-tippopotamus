@@ -62,6 +62,8 @@ export class Tip {
     } else {
       totalAmount = isAll ? from.balances[token] : amount
       amountPer = +Big(totalAmount).div(to.length)
+    if (totalAmount.lte(0)) {
+      return { message: { body: `You can't tip **≤ 0**`} }
     }
 
     if (!senderAccount.balanceSufficient(token, totalAmount)) {
