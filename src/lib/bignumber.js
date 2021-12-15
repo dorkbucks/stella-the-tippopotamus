@@ -1,15 +1,23 @@
 import dotenv from 'dotenv'
 dotenv.config()
 
-import BigNumber from 'bignumber.js'
+import { default as Big } from 'bignumber.js'
 
+const DECIMAL_PLACES = 7
 
-BigNumber.config({
-  DECIMAL_PLACES: 7,
-  ROUNDING_MODE: BigNumber.ROUND_DOWN,
+Big.config({
+  DECIMAL_PLACES,
+  ROUNDING_MODE: Big.ROUND_DOWN,
   EXPONENTIAL_AT: [-8, 20],
 })
 
-BigNumber.DEBUG = process.env.NODE_ENV !== 'production'
+Big.DEBUG = process.env.NODE_ENV !== 'production'
 
-export default BigNumber
+export default new Proxy(Big, {
+  construct: function (target, args) {
+    return target(...args).decimalPlaces(DECIMAL_PLACES)
+  },
+  apply: function (target, that, args) {
+    return this.construct(target, args)
+  }
+})
