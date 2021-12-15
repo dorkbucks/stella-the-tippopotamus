@@ -22,3 +22,9 @@ test('.list()', (t) => {
 
   t.end()
 })
+
+test('.get', (t) => {
+  t.equal(tokens.get('dork', 'name'), 'DorkBucks', 'Get by alias')
+  t.equal(tokens.get('ana', 'name'), 'Ananos', 'Get by alias')
+  t.end()
+})
