@@ -2,8 +2,6 @@ import { Account } from '../lib/account.js'
 import { tokens } from '../tokens/index.js'
 
 
-const TOKENS = tokens.list()
-
 export class Balance {
   constructor (account) {
     this.account = account
