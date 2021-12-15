@@ -3,7 +3,7 @@ import Datastore from 'nedb-promises'
 import { BigNumber } from './proxied_bignumber.js'
 import { bot } from './bot.js'
 
-const accountsDB = Datastore.create(new URL('../var/accounts.db', import.meta.url).pathname)
+const accountsDB = Datastore.create(new URL('../../var/accounts.db', import.meta.url).pathname)
 
 export class Account {
   static async getOrCreate (acctData, tokens) {
