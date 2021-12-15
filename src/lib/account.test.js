@@ -2,19 +2,10 @@ import { test } from 'tap'
 
 import { BigNumber } from './proxied_bignumber.js'
 import { Account } from './account.js'
+import { tokens } from '../tokens/index.js'
 
 
-const TOKENS = [
-  'BTC',
-  'ETH',
-  'XLM'
-]
-
-const balances = {
-  BTC: 0,
-  ETH: 0,
-  XLM: 0
-}
+const TOKENS = tokens.list()
 
 test('Constructor works with id string', (t) => {
   const id = '1234'
@@ -48,9 +39,9 @@ test('balances', (t) => {
   t.test('"New" account', (_t) => {
     const o = { id: '1234' }
     const acct = new Account(o, TOKENS)
-    t.ok(BigNumber.isBigNumber(acct.balances[TOKENS[0]]), 'Should be a BigNumber instance')
-    t.ok(BigNumber.isBigNumber(acct.balances[TOKENS[1]]), 'Should be a BigNumber instance')
-    t.ok(BigNumber.isBigNumber(acct.balances[TOKENS[2]]), 'Should be a BigNumber instance')
+    TOKENS.forEach(({ name }) => {
+      t.ok(BigNumber.isBigNumber(acct.balances[name]), 'Should be a BigNumber instance')
+    })
     _t.end()
   })
 
@@ -58,18 +49,17 @@ test('balances', (t) => {
     // Reinstantiate BigNumber instances, i.e retrieving from a db
     const _acct = {
       _id: '1234',
-      balances: {
-        // Simulate what a BigNumber object looks like after retrieval from a db
-        [TOKENS[0]]: { ...BigNumber(100) },
-        [TOKENS[1]]: { ...BigNumber(100) },
-        [TOKENS[2]]: { ...BigNumber(100) }
-      }
+      // Simulate what a BigNumber object looks like after retrieval from a db
+      balances: TOKENS.reduce((o, { name }) => {
+        o[name] = { ...BigNumber(100) }
+        return o
+      }, {})
     }
 
     const acct = new Account(_acct, TOKENS)
-    t.ok(BigNumber.isBigNumber(acct.balances[TOKENS[0]]), 'Should be a BigNumber instance')
-    t.ok(BigNumber.isBigNumber(acct.balances[TOKENS[1]]), 'Should be a BigNumber instance')
-    t.ok(BigNumber.isBigNumber(acct.balances[TOKENS[2]]), 'Should be a BigNumber instance')
+    TOKENS.forEach(({ name }) => {
+      t.ok(BigNumber.isBigNumber(acct.balances[name]), 'Should be a BigNumber instance')
+    })
 
     _t.end()
   })
@@ -78,7 +68,7 @@ test('balances', (t) => {
 })
 
 test('#credit', (t) => {
-  const token = TOKENS[0]
+  const token = TOKENS[0].name
   const amount = 100
   const acct = new Account('1', TOKENS)
   const acctAfter = acct.credit(token, amount)
@@ -90,7 +80,7 @@ test('#credit', (t) => {
 })
 
 test('#debit', (t) => {
-  const token = TOKENS[0]
+  const token = TOKENS[0].name
   const amount = 100
   const balance = 1000
   let acct = new Account('1', TOKENS)
@@ -104,7 +94,7 @@ test('#debit', (t) => {
 })
 
 test('#balanceSufficient', (t) => {
-  const token = TOKENS[0]
+  const token = TOKENS[0].name
   const balance = 1000
   const acct = new Account('1', TOKENS)
   acct.balances[token] = balance

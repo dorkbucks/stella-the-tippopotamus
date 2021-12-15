@@ -21,8 +21,12 @@ function get (str, prop) {
   return token
 }
 
-function list (by='name') {
-  return TOKENS.map(t => t[by])
+function list (...props) {
+  if (props.length < 1) props.push('name')
+  return TOKENS.map((token) => props.reduce((t, prop) => {
+    t[prop] = token[prop]
+    return t
+  }, {}))
 }
 
 function isSupported (str) {
