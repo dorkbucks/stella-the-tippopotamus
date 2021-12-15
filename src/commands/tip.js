@@ -30,6 +30,19 @@ export class Tip {
     }, {})
   }
 
+  calcAmounts ({ sender, recipients, token, amount, isAll, isEach }) {
+    amount = typeof amount === 'number' ? BigNumber(amount) : amount
+    let totalAmount, amountPer
+    if (isEach) {
+      totalAmount = amount.times(recipients.length)
+      amountPer = amount
+    } else {
+      totalAmount = isAll ? BigNumber(sender.balances[token]) : amount
+      amountPer = totalAmount.div(recipients.length)
+    }
+    return [totalAmount, amountPer]
+  }
+
   async call () {
     const { sender, amount, modifier } = this
     const recipients = uniquify(this.recipientIDs).map(id => ({ id }))
@@ -57,18 +70,12 @@ export class Tip {
       ))
     )
 
-    let totalAmount, amountPer
-    if (isEach) {
-      totalAmount = BigNumber(amount).times(recipients.length)
-      amountPer = BigNumber(amount)
-    } else {
-      totalAmount = BigNumber(isAll ? from.balances[token] : amount)
-      amountPer = BigNumber(totalAmount).div(recipients.length)
-    }
-
     if (amountPer.lte(minimumTip)) {
       return { message: { body: `${emoji} The minimum **${token}** tip is **${minimumTip}** per person`} }
     }
+    const [totalAmount, amountPer] = this.calcAmounts({
+      sender, recipients, token, amount, isAll, isEach
+    })
 
     if (totalAmount.lte(0)) {
       return { message: { body: `You can't tip **≤ 0**`} }
