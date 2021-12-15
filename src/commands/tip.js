@@ -101,7 +101,7 @@ export class Tip {
 
     return {
       message: {
-        body: `<@${sender.id}> sent ${emoji} ${amountSent} to ${tos}`
+        body: `<@${sender._id}> sent ${emoji} ${amountSent} to ${tos}`
       }
     }
   }
