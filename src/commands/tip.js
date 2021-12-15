@@ -47,6 +47,11 @@ export class Tip {
     const { sender, amount, modifier } = this
     const recipients = uniquify(this.recipientIDs).map(id => ({ id }))
     const token = tokens.get(this.token, 'name')
+
+    if (!token) {
+      return { message: { body: `That token isn't supported` } }
+    }
+
     const { emoji } = tokens.get(token, 'logo')
     const minimumTip = BigNumber(tokens.get(token, 'minimumTip'))
 
