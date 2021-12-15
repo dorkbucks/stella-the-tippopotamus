@@ -59,6 +59,10 @@ export class Tip {
       return { message: { body: `You can't tip yourself` } }
     }
 
+    if (!amount) {
+      return { message: { body: `I don't know what amount you mean` } }
+    }
+
     const isAll = amount === 'all'
     const isEach = modifier === 'each' && recipients.length > 1
     if (isAll && isEach) {
