@@ -70,9 +70,6 @@ export class Tip {
       ))
     )
 
-    if (amountPer.lte(minimumTip)) {
-      return { message: { body: `${emoji} The minimum **${token}** tip is **${minimumTip}** per person`} }
-    }
     const [totalAmount, amountPer] = this.calcAmounts({
       sender, recipients, token, amount, isAll, isEach
     })
@@ -83,6 +80,10 @@ export class Tip {
 
     if (!senderAccount.balanceSufficient(token, totalAmount)) {
       return { message: { body: `You can't afford this tip` } }
+    }
+
+    if (amountPer.lte(minimumTip)) {
+      return { message: { body: `${emoji} The minimum **${token}** tip is **${minimumTip}** per person`} }
     }
 
     let updatedSenderAccount = senderAccount.debit(token, totalAmount)
