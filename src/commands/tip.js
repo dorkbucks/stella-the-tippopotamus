@@ -35,6 +35,7 @@ export class Tip {
     const recipients = uniquify(this.recipientIDs).map(id => ({ id }))
     const token = tokens.get(this.token, 'name')
     const { emoji } = tokens.get(token, 'logo')
+    const minimumTip = BigNumber(tokens.get(token, 'minimumTip'))
 
     if (this.recipientIDs.includes(sender.id)) {
       return { message: { body: `You can't tip yourself` } }
@@ -63,6 +64,10 @@ export class Tip {
     } else {
       totalAmount = BigNumber(isAll ? from.balances[token] : amount)
       amountPer = BigNumber(totalAmount).div(recipients.length)
+    }
+
+    if (amountPer.lte(minimumTip)) {
+      return { message: { body: `${emoji} The minimum **${token}** tip is **${minimumTip}** per person`} }
     }
 
     if (totalAmount.lte(0)) {
