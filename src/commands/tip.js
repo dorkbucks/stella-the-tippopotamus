@@ -51,7 +51,9 @@ export class Tip {
     }
 
     const [senderAccount, ...recipientAccounts] = await Promise.all(
-      [sender, ...recipients].map(o => Account.getOrCreate(o, TOKENS))
+      [sender, ...recipients].map(obj => (
+        (obj instanceof Account) ? obj : Account.getOrCreate(obj, TOKENS)
+      ))
     )
 
     let totalAmount, amountPer
