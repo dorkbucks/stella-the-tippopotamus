@@ -12,13 +12,13 @@ const TOKENS = [
 const lc = t => t.toLowerCase()
 
 function get (str, prop) {
+  if (!prop) return
   str = lc(str)
   const token = TOKENS.filter(({ aliases }) => aliases.map(lc).includes(str))[0]
-  if (!token) return null
-  if (prop && prop in token) {
+  if (!token) return
+  if (prop in token) {
     return token[prop]
   }
-  return token
 }
 
 function list (...props) {

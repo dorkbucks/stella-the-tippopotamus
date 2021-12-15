@@ -26,5 +26,9 @@ test('.list()', (t) => {
 test('.get', (t) => {
   t.equal(tokens.get('dork', 'name'), 'DorkBucks', 'Get by alias')
   t.equal(tokens.get('ana', 'name'), 'Ananos', 'Get by alias')
+
+  t.equal(tokens.get('none', 'name'), undefined, 'Return undefined if non-existent token')
+  t.equal(tokens.get('dork'), undefined, 'Return undefined if no prop passed')
+  t.equal(tokens.get('dork', 'none'), undefined, 'Return undefined if non-existent prop')
   t.end()
 })
