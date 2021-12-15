@@ -1,7 +1,7 @@
 import tap from 'tap'
 import { default as TheRealBigNumber } from 'bignumber.js'
 
-import BigNumber from './bignumber.js'
+import { BigNumber } from './proxied_bignumber.js'
 
 
 const d = 0.00000019

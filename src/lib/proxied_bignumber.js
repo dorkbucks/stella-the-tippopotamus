@@ -13,7 +13,7 @@ Big.config({
 
 Big.DEBUG = process.env.NODE_ENV !== 'production'
 
-export default new Proxy(Big, {
+export const BigNumber = new Proxy(Big, {
   construct: function (target, args) {
     return target(...args).decimalPlaces(DECIMAL_PLACES)
   },

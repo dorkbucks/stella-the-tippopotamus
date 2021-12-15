@@ -1,6 +1,6 @@
 import { test } from 'tap'
 
-import BigNumber from './bignumber.js'
+import { BigNumber } from './proxied_bignumber.js'
 import { Account } from './account.js'
 
 
