@@ -4,6 +4,7 @@ import { tokens } from '../tokens/index.js'
 
 export class Balance {
   static aliases = ['bal', 'bals', 'balance', 'balances']
+  static channelTypes = ['DM', 'GUILD_TEXT']
 
   call ({ username, avatar, balances }) {
     return {

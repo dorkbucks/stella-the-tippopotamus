@@ -24,17 +24,24 @@ bot.once('ready', () => console.log(`Tipbot logged in as ${DISCORD_CLIENT_ID}`))
 bot.on('messageCreate', async (msg) => {
   const { channelId, content, author } = msg
   if (author.id === DISCORD_CLIENT_ID) return
-  if (channelId !== CHANNEL_ID) return
+
+  const channelType = msg.channel.type
+
+  // NOTE: Temporary while in private dev
+  if (channelType === 'GUILD_TEXT' && channelId !== CHANNEL_ID) return
   if (!content.startsWith(SIGIL)) return
   const { command, args } = parseCommand(SIGIL, content)
   const Command = commands.get(command)
-  if (!Command) return
+
+  if (!Command || !Command.channelTypes.includes(channelType)) return
+
+  const cmd = new Command()
   const sender = await Account.getOrCreate({
     id: author.id,
     username: author.username,
     avatar: author.avatarURL()
   }, TOKENS)
-  const cmd = new Command()
+
   const result = await cmd.call(sender, args)
   const {
     heading='',
@@ -57,6 +64,8 @@ bot.on('messageCreate', async (msg) => {
         .setDescription(body)
         .setImage(imageName)
         .setFooter(footer)
-  msg.channel.send({ embeds: [embed], files })
+
+  const channel = channelType === 'DM' ? author : msg.channel
+  channel.send({ embeds: [embed], files })
 })
 bot.login(DISCORD_TOKEN)

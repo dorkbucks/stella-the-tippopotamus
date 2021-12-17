@@ -13,6 +13,8 @@ const tokenList = tokens.list('name', 'logo').reduce((str, { name, logo }) => {
 const pk = process.env.ACCOUNT_PUBLIC_KEY
 
 export class DepositRequest {
+  static channelTypes = ['DM']
+
   async call (sender) {
     const memo = sender._id
     const url = `web+stellar:pay?destination=${pk}&memo=${memo}`

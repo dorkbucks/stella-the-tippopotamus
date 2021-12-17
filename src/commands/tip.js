@@ -14,6 +14,8 @@ const token = /[a-z]+/i
 const modifier = /^each?/i
 
 export class Tip {
+  static channelTypes = ['GUILD_TEXT']
+
   parseArgs (args) {
     let argsObj = {}
     for (let i = 0, len = args.length; i < len; i++) {
