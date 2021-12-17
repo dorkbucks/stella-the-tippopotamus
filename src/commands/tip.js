@@ -114,7 +114,7 @@ export class Tip {
       return { message: { body: `You can't afford this tip` } }
     }
 
-    if (amountPer.lte(minimumTip)) {
+    if (amountPer.lt(minimumTip)) {
       return { message: { body: `${emoji} The minimum **${token}** tip is **${minimumTip}** per person`} }
     }
 
