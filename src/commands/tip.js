@@ -14,10 +14,6 @@ const token = /[a-z]+/i
 const modifier = /^each?/i
 
 export class Tip {
-  constructor (sender, args) {
-    Object.assign(this, this.parseArgs(args), { sender })
-  }
-
   parseArgs (args) {
     let argsObj = {}
     for (let i = 0, len = args.length; i < len; i++) {
@@ -64,10 +60,16 @@ export class Tip {
     return [totalAmount, amountPer]
   }
 
-  async call () {
-    const { sender, amount, modifier } = this
-    const recipients = uniquify(this.recipientIDs).map(id => ({ id }))
-    const token = tokens.get(this.token, 'name')
+  async call (sender, args) {
+    args = this.parseArgs(args)
+
+    if (args === null) {
+      return { message: { body: `I don't understand what you mean` } }
+    }
+
+    const { recipientIDs, amount, modifier } = args
+    const recipients = uniquify(recipientIDs).map(id => ({ id }))
+    const token = tokens.get(args.token, 'name')
 
     if (!token) {
       return { message: { body: `That token isn't supported` } }
@@ -76,7 +78,7 @@ export class Tip {
     const { emoji } = tokens.get(token, 'logo')
     const minimumTip = BigNumber(tokens.get(token, 'minimumTip'))
 
-    if (this.recipientIDs.includes(sender.id)) {
+    if (recipientIDs.includes(sender.id)) {
       return { message: { body: `You can't tip yourself` } }
     }
 

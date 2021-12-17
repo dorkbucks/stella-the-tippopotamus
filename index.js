@@ -29,13 +29,13 @@ bot.on('messageCreate', async (msg) => {
   const { command, args } = parseCommand(SIGIL, content)
   const Command = commands.get(command)
   if (!Command) return
-  const account = await Account.getOrCreate({
+  const sender = await Account.getOrCreate({
     id: author.id,
     username: author.username,
     avatar: author.avatarURL()
   }, TOKENS)
-  const cmd = new Command(account, args)
-  const result = await cmd.call()
+  const cmd = new Command()
+  const result = await cmd.call(sender, args)
   const {
     heading='',
     icon='',

@@ -19,8 +19,8 @@ test('Balance', (t) => {
     }, {})
   }, TOKENS)
 
-  const bal = new Balance(account)
-  const { message: { heading, icon, body } } = bal.call()
+  const bal = new Balance()
+  const { message: { heading, icon, body } } = bal.call(account)
   t.equal(heading, `${account.username}'s balances`)
   t.equal(icon, account.avatar)
   const match = body.match(/10,000.01/g)

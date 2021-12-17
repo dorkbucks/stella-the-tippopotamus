@@ -3,12 +3,9 @@ import { tokens } from '../tokens/index.js'
 
 
 export class Balance {
-  constructor (account) {
-    this.account = account
-  }
+  static aliases = ['bal', 'bals', 'balance', 'balances']
 
-  call () {
-    const { username, avatar, balances } = this.account
+  call ({ username, avatar, balances }) {
     return {
       message: {
         heading: `${username}'s balances`,
