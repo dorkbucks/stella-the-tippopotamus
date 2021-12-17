@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 dotenv.config()
 
-import { Client, Intents, MessageEmbed } from 'discord.js'
+import { Client, Intents, MessageAttachment, MessageEmbed } from 'discord.js'
 
 import { bot } from './src/lib/bot.js'
 import { parseCommand, commands } from './src/commands/index.js'
@@ -40,13 +40,23 @@ bot.on('messageCreate', async (msg) => {
     heading='',
     icon='',
     body,
+    image,
     footer=''
   } = result.message
+
+  let files = []
+  let imageName = ''
+  if (image) {
+    files.push(new MessageAttachment(image.attachment, image.name))
+    imageName = `attachment://${image.name}`
+  }
+
   const embed = new MessageEmbed()
         .setColor('#ff9900')
         .setAuthor(heading, icon)
         .setDescription(body)
+        .setImage(imageName)
         .setFooter(footer)
-  msg.reply({ embeds: [embed] })
+  msg.channel.send({ embeds: [embed], files })
 })
 bot.login(DISCORD_TOKEN)
