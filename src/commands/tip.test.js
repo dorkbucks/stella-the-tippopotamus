@@ -4,6 +4,7 @@ import { BigNumber } from '../lib/proxied_bignumber.js'
 import { Account } from '../lib/account.js'
 import { tokens } from '../tokens/index.js'
 import { Tip } from './tip.js'
+import { parseCommand } from './index.js'
 
 
 const TOKENS = tokens.list()
@@ -15,6 +16,61 @@ function createFundedAccount () {
   })
   return account
 }
+
+test('#parseArgs', (t) => {
+  const tip = new Tip({}, [])
+  const id1 = '788381709112573982'
+  const id2 = '564377836685754380'
+
+  t.test('1 recipient', (_t) => {
+    const { args } = parseCommand('.', `.tip <@!${id1}> 100 dork`)
+    const parsedArgs = tip.parseArgs(args)
+    t.ok(parsedArgs.recipientIDs.includes(id1))
+    t.equal(100, parsedArgs.amount)
+    t.equal('dork', parsedArgs.token)
+    _t.end()
+  })
+
+  t.test('2 recipients', (_t) => {
+    const { args } = parseCommand('.', `.tip <@!${id1}> <@!${id2}> 100 dork`)
+    const parsedArgs = tip.parseArgs(args)
+    t.ok(parsedArgs.recipientIDs.includes(id1))
+    t.ok(parsedArgs.recipientIDs.includes(id2))
+    t.equal(100, parsedArgs.amount)
+    t.equal('dork', parsedArgs.token)
+    _t.end()
+  })
+
+  t.test('Multiple comma-separated recipients', (_t) => {
+    const { args } = parseCommand('.', `.tip <@!${id1}>, <@!${id2}> 100 dork`)
+    const parsedArgs = tip.parseArgs(args)
+    t.ok(parsedArgs.recipientIDs.includes(id1))
+    t.ok(parsedArgs.recipientIDs.includes(id2))
+    t.equal(100, parsedArgs.amount)
+    t.equal('dork', parsedArgs.token)
+    _t.end()
+  })
+
+  t.test('"all" amount', (_t) => {
+    const { args } = parseCommand('.', `.tip <@!${id1}> all dork`)
+    const parsedArgs = tip.parseArgs(args)
+    t.ok(parsedArgs.recipientIDs.includes(id1))
+    t.equal('all', parsedArgs.amount)
+    _t.end()
+  })
+
+  t.test('"each" modifier', (_t) => {
+    const { args } = parseCommand('.', `.tip <@!${id1}> 100 dork each`)
+    const parsedArgs = tip.parseArgs(args)
+    t.ok(parsedArgs.recipientIDs.includes(id1))
+    t.equal(100, parsedArgs.amount)
+    t.equal('dork', parsedArgs.token)
+    t.equal('each', parsedArgs.modifier)
+    _t.end()
+  })
+
+  t.end()
+})
 
 test('#calcAmounts', (t) => {
   const sender = createFundedAccount()
