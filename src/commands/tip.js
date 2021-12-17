@@ -8,26 +8,47 @@ import { expandSuffixedNum } from '../lib/expand_suffixed_num.js'
 const TOKENS = tokens.list()
 const lf = new Intl.ListFormat('en')
 
+const userID = /^<@!?(?<id>\d{17,19})>$/
+const amount = /^\d?.?\d+[k|m|b]?$|all?\b/i
+const token = /[a-z]+/i
+const modifier = /^each?/i
+
 export class Tip {
   constructor (sender, args) {
     Object.assign(this, this.parseArgs(args), { sender })
   }
 
   parseArgs (args) {
-    return args.reduce((obj, val) => {
-      val = val.toLowerCase()
-      const user = val.match(/^<@!?(?<id>\d{17,19})>$/)
+    let argsObj = {}
+    for (let i = 0, len = args.length; i < len; i++) {
+      let curr = args[i]
+      let next = args[i + 1]
+
+      let user = curr.match(userID)
+
+      if (i === 0 && !user) return null
+
       if (user) {
-        obj.recipientIDs = [...(obj.recipientIDs || []), user.groups.id]
-      } else if (/^\d?.?\d+[k|m|b]?$|all?\b/i.test(val)) {
-        obj.amount = val === 'all' ? val : expandSuffixedNum(val)
-      } else if (val === 'each') {
-        obj.modifier = val
-      } else {
-        obj.token = val
+        const nextIsUserID = userID.test(next)
+        const nextIsAmount = amount.test(next)
+        const nextIsNotUserOrAmount = nextIsUserID ? nextIsAmount : !nextIsAmount
+        if (nextIsNotUserOrAmount) return null
+        argsObj.recipientIDs = argsObj.recipientIDs || []
+        argsObj.recipientIDs.push(user.groups.id)
       }
-      return obj
-    }, {})
+
+      if (amount.test(curr)) {
+        const isToken = next && token.test(next)
+        if (!isToken) return null
+        argsObj.amount = curr === 'all' ? curr : expandSuffixedNum(curr)
+        argsObj.token = next
+      }
+
+      if (modifier.test(curr)) {
+        argsObj.modifier = curr
+      }
+    }
+    return argsObj
   }
 
   calcAmounts ({ sender, recipients, token, amount, isAll, isEach }) {

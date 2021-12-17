@@ -69,6 +69,25 @@ test('#parseArgs', (t) => {
     _t.end()
   })
 
+  t.test('Enforce argument order', (_t) => {
+    var { args } = parseCommand('.', `.tip <@!${id1}> dork 100`)
+    t.same(tip.parseArgs(args), null)
+
+    var { args } = parseCommand('.', `.tip 100 dork <@!${id1}>`)
+    t.same(tip.parseArgs(args), null)
+
+    var { args } = parseCommand('.', `.tip 100 <@!${id1}> dork`)
+    t.same(tip.parseArgs(args), null)
+
+    var { args } = parseCommand('.', `.tip dork <@!${id1}> 100`)
+    t.same(tip.parseArgs(args), null)
+
+    var { args } = parseCommand('.', `.tip dork 100 <@!${id1}>`)
+    t.same(tip.parseArgs(args), null)
+
+    _t.end()
+  })
+
   t.end()
 })
 
