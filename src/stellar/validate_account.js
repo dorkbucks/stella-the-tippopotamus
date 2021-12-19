@@ -56,13 +56,13 @@ export async function validateAccount (server, asset, accountID) {
     return {
       fedAddress,
       address: accountID,
-      is_valid: true
+      isValid: true
     }
   } catch (e) {
     return {
       fedAddress,
       address: accountID,
-      is_valid: false,
+      isValid: false,
       reason: e.message
     }
   }
