@@ -110,6 +110,40 @@ test('validate', async (t) => {
       _t.end()
     }),
 
+    t.test('Invalid token', async (_t) => {
+      try {
+        const parsedArgs = withdrawal.parseArgs(['100', 'bork', address])
+        await withdrawal.validate(mockValidateAccountTrue, sender, parsedArgs)
+        t.fail('Should throw on unsupported token')
+      } catch(e) {
+        t.ok(e)
+      }
+      _t.end()
+    }),
+
+    t.test('Invalid address', async (_t) => {
+      try {
+        const parsedArgs = withdrawal.parseArgs(['100', 'dork', address])
+        await withdrawal.validate(mockValidateAccountFalse, sender, parsedArgs)
+        t.fail('Should throw on invalid address')
+      } catch(e) {
+        t.ok(e)
+      }
+      _t.end()
+    }),
+
+    t.test('Invalid memo', async (_t) => {
+      try {
+        const memo = Array(100).join('d')
+        const parsedArgs = withdrawal.parseArgs(['100', 'dork', address, memo])
+        await withdrawal.validate(mockValidateAccountTrue, sender, parsedArgs)
+        _t.fail('Should throw on memo too long for MemoID and MemoText')
+      } catch(e) {
+        t.ok(e)
+      }
+
+      _t.end()
+    }),
   ])
 
   t.end()
