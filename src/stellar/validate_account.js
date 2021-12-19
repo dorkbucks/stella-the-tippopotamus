@@ -5,7 +5,7 @@ import { FederationServer, StrKey } from 'stellar-sdk'
 // SEP 29 uses this value to define transaction memo requirements for incoming payments.
 const ACCOUNT_REQUIRES_MEMO = 'MQ=='
 
-export async function validateAccount (server, asset, accountID) {
+export async function validateAccount (server, asset, accountID, memoRequiredCheck=true) {
   let fedAddress = accountID.fedAddress
   accountID = fedAddress ? accountID.address : accountID
 
@@ -49,7 +49,7 @@ export async function validateAccount (server, asset, accountID) {
     // An account having a trustline to the asset but requiring a memo is
     // unlikely but is still an error condition. This will also allow
     // safely skipping the memo check in payment operations.
-    if (account.data_attr['config.memo_required'] === ACCOUNT_REQUIRES_MEMO) {
+    if (memoRequiredCheck && account.data_attr['config.memo_required'] === ACCOUNT_REQUIRES_MEMO) {
       throw new Error('Account requires a memo')
     }
 
