@@ -51,3 +51,36 @@ test('parseArgs', (t) => {
   t.equal(parsedArgs.memo, '100230')
   t.end()
 })
+
+test('validate', async (t) => {
+  const mockValidateAccountTrue = () => ({isValid: true})
+  const mockValidateAccountFalse = () => ({isValid: false, reason: 'Not valid'})
+  const sender = createFundedAccount()
+  const withdrawal = new WithdrawalRequest()
+  const address = `GC6SOPXA7X7LDKJK3SDHL6MQEQLOHF23G5CN2MLT4MJ2UPFUSKRKIURG`
+
+  await Promise.all([
+    t.test('All valid; no memo', async (_t) => {
+      const parsedArgs = withdrawal.parseArgs(['100', 'dork', address])
+      const result = await withdrawal.validate(mockValidateAccountTrue, sender, parsedArgs)
+      t.ok(result)
+      _t.end()
+    }),
+
+    t.test('All valid; with memo id', async (_t) => {
+      const parsedArgs = withdrawal.parseArgs(['100', 'dork', address, '123456'])
+      const result = await withdrawal.validate(mockValidateAccountTrue, sender, parsedArgs)
+      t.ok(result)
+      _t.end()
+    }),
+
+    t.test('All valid; with memo text', async (_t) => {
+      const memo = Array(29).join('d')
+      const parsedArgs = withdrawal.parseArgs(['100', 'dork', address, memo])
+      const result = await withdrawal.validate(mockValidateAccountTrue, sender, parsedArgs)
+      t.ok(result)
+      _t.end()
+    }),
+
+  t.end()
+})
