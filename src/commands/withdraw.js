@@ -1,4 +1,8 @@
+import { Asset, Memo, MemoID, MemoText } from 'stellar-sdk'
+
+import { tokens } from '../tokens/index.js'
 import { expandSuffixedNum } from '../lib/expand_suffixed_num.js'
+import { server, validateAccount } from '../stellar/index.js'
 
 
 const publicKey = /^G[A-Z0-9]{55}$/
@@ -40,6 +44,40 @@ export class WithdrawalRequest {
       }
     }
     return argsObj
+  }
+
+  async validate (accountValidator, sender, { amount, token, address, memo }) {
+    const tokenName = tokens.get(token, 'name')
+
+    if (!tokenName || !tokens.isSupported(token)) {
+      throw new Error(`${token} is not a supported token`)
+    }
+
+    if (!sender.balanceSufficient(tokenName, amount)) {
+      throw new Error('You cannot afford this withdrawal')
+    }
+
+    const issuer = tokens.get(token, 'issuer')
+    const asset = new Asset(tokenName, issuer)
+
+    const { isValid, reason } = await accountValidator(server, asset, address, false)
+    if (!isValid) {
+      throw new Error(reason)
+    }
+
+    if (memo) {
+      try {
+        new Memo(MemoID, memo)
+      } catch (e) {
+        try {
+          new Memo(MemoText, memo)
+        } catch (e) {
+          throw new Error('Memo is invalid')
+        }
+      }
+    }
+
+    return true
   }
 
   async call (sender, args) {
