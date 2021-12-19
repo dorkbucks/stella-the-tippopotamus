@@ -91,6 +91,22 @@ test('validate', async (t) => {
         t.ok(e)
       }
 
+      try {
+        const parsedArgs = withdrawal.parseArgs(['-100', 'dork', address])
+        const result = await withdrawal.validate(mockValidateAccountTrue, sender, parsedArgs)
+        t.fail('Should throw on negative amount')
+      } catch(e) {
+        t.ok(e)
+      }
+
+      try {
+        const parsedArgs = withdrawal.parseArgs(['0', 'dork', address])
+        const result = await withdrawal.validate(mockValidateAccountTrue, sender, parsedArgs)
+        t.fail('Should throw on 0 amount')
+      } catch(e) {
+        t.ok(e)
+      }
+
       _t.end()
     }),
 

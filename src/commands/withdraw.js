@@ -1,5 +1,6 @@
 import { Asset, Memo, MemoID, MemoText } from 'stellar-sdk'
 
+import { BigNumber } from '../lib/proxied_bignumber.js'
 import { tokens } from '../tokens/index.js'
 import { expandSuffixedNum } from '../lib/expand_suffixed_num.js'
 import { server, validateAccount } from '../stellar/index.js'
@@ -48,6 +49,11 @@ export class WithdrawalRequest {
 
   async validate (accountValidator, sender, { amount, token, address, memo }) {
     const tokenName = tokens.get(token, 'name')
+    amount = BigNumber(amount)
+
+    if (amount.lte(0)) {
+      throw new Error('Amount should be a positive number')
+    }
 
     if (!tokenName || !tokens.isSupported(token)) {
       throw new Error(`${token} is not a supported token`)
