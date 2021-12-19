@@ -4,6 +4,7 @@ import { expandSuffixedNum } from '../lib/expand_suffixed_num.js'
 const publicKey = /^G[A-Z0-9]{55}$/
 const amount = /^\d?.?\d+[k|m|b]?$|all?\b/i
 const token = /^[a-z]+/i
+const memo = /\S+/
 
 
 export class WithdrawalRequest {
@@ -19,7 +20,8 @@ export class WithdrawalRequest {
 
       if (i === 0 && !amt) return null
 
-      if (amt) {
+      // Memos might match as amt so check if we already have an amount.
+      if (amt && !argsObj.amount) {
         const isToken = next && token.test(next)
         if (!isToken) return null
         argsObj.amount = curr === 'all' ? curr : expandSuffixedNum(curr)
@@ -30,6 +32,11 @@ export class WithdrawalRequest {
       const address = curr.match(publicKey)
       if (address) {
         argsObj.address = address[0]
+
+        if (next && memo.test(next)) {
+          argsObj.memo = next
+          continue
+        }
       }
     }
     return argsObj

@@ -35,3 +35,15 @@ tap.equal(parsedArgs.address, address)
 
 var parsedArgs = withdrawal.parseArgs(['dork', '100', address])
 tap.equal(parsedArgs, null)
+
+var parsedArgs = withdrawal.parseArgs(['100', 'dork', address, 'memo message'])
+tap.equal(parsedArgs.amount, 100)
+tap.equal(parsedArgs.token, 'dork')
+tap.equal(parsedArgs.address, address)
+tap.equal(parsedArgs.memo, 'memo message')
+
+var parsedArgs = withdrawal.parseArgs(['100', 'dork', address, '100230'])
+tap.equal(parsedArgs.amount, 100)
+tap.equal(parsedArgs.token, 'dork')
+tap.equal(parsedArgs.address, address)
+tap.equal(parsedArgs.memo, '100230')
