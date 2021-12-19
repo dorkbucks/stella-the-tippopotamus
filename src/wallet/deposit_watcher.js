@@ -4,6 +4,7 @@ dotenv.config()
 import { Server } from 'stellar-sdk'
 import Datastore from 'nedb-promises'
 
+import { server } from '../lib/stellar.js'
 import { Account } from '../lib/account.js'
 import { tokens } from '../tokens/index.js'
 
@@ -12,9 +13,7 @@ const depositsDB = Datastore.create(new URL('../../var/deposits.db', import.meta
 const TOKENS = tokens.list('name')
 
 export async function startDepositWatcher () {
-  const server = new Server('https://horizon-testnet.stellar.org')
   const address = process.env.ACCOUNT_PUBLIC_KEY
-
   const lastDeposit = await depositsDB.findOne().sort({ date: -1 })
   const pagingToken = lastDeposit?.pagingToken || 'now'
   const handlers = {
