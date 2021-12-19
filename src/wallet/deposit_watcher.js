@@ -4,7 +4,7 @@ dotenv.config()
 import { Server } from 'stellar-sdk'
 import Datastore from 'nedb-promises'
 
-import { server } from '../lib/stellar.js'
+import { server } from '../stellar/index.js'
 import { Account } from '../lib/account.js'
 import { tokens } from '../tokens/index.js'
 
