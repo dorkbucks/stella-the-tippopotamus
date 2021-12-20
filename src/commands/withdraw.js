@@ -16,7 +16,12 @@ export class WithdrawalRequest {
   static channelTypes = ['DM']
 
   parseArgs (args) {
-    let argsObj = {}
+    let argsObj = {
+      amount: '',
+      token: '',
+      address: ''
+    }
+
     for (let i = 0, len = args.length; i < len; i++) {
       let curr = args[i]
       let next = args[i + 1]
