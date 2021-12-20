@@ -1,13 +1,12 @@
 import { Asset, Operation, TransactionBuilder, Memo } from 'stellar-sdk'
 
-export async function sendPayment (config, asset, from, to, amount, memoMsg) {
+export async function sendPayment (config, asset, from, to, amount, memo) {
   const { server, txnOpts } = config
   const basePaymentOpts = {
     asset,
     amount: amount.toString()
   }
   const destination = to.publicKey()
-  const memoText = memoMsg && Memo.text(memoMsg)
 
   try {
     const [source, fee, timebounds] = await Promise.all([
@@ -21,8 +20,8 @@ export async function sendPayment (config, asset, from, to, amount, memoMsg) {
 
     let txn = new TransactionBuilder(source, transactionOpts)
     txn.addOperation(payment)
-    if (memoText) {
-      txn.addMemo(memoText)
+    if (memo) {
+      txn.addMemo(memo)
     }
     txn = txn.build()
     txn.sign(from)
