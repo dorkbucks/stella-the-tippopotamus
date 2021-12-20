@@ -7,24 +7,24 @@ import Datastore from 'nedb-promises'
 import { server } from '../stellar/index.js'
 import { Account } from '../lib/account.js'
 import { tokens } from '../tokens/index.js'
+import { walletAddress } from './config.js'
 
 
 const depositsDB = Datastore.create(new URL('../../var/deposits.db', import.meta.url).pathname)
 const TOKENS = tokens.list('name')
 
 export async function startDepositWatcher () {
-  const address = process.env.ACCOUNT_PUBLIC_KEY
   const lastDeposit = await depositsDB.findOne().sort({ date: -1 })
   const pagingToken = lastDeposit?.pagingToken || 'now'
   const handlers = {
-    onmessage: depositHandler(address, depositsDB, Account),
+    onmessage: depositHandler(walletAddress, depositsDB, Account),
     onerror: (error) => console.log(error)
   }
 
   console.log(`Starting transaction stream at cursor: ${pagingToken}`)
 
   return server.payments()
-               .forAccount(address)
+               .forAccount(walletAddress)
                .cursor(pagingToken)
                .stream(handlers)
 }
