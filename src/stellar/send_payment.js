@@ -34,7 +34,7 @@ export async function sendPayment (config, asset, from, to, amount, memo) {
       txn: result
     }
   } catch (e) {
-    return {
+    throw {
       address: destination,
       success: false,
       reason: e.message,
