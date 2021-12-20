@@ -1,4 +1,4 @@
-import { Asset, Operation, TransactionBuilder, BASE_FEE, Memo } from 'stellar-sdk'
+import { Asset, Operation, TransactionBuilder, Memo } from 'stellar-sdk'
 
 export async function sendPayment (config, asset, from, to, amount, memoMsg) {
   const { server, txnOpts } = config
