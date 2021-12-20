@@ -26,7 +26,7 @@ export async function sendPayment (config, asset, from, to, amount, memo) {
     txn = txn.build()
     txn.sign(from)
 
-    const result = await server.submitTransaction(txn, { skipMemoRequiredCheck: true })
+    const result = await server.submitTransaction(txn)
 
     return {
       address: destination,
