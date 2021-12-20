@@ -92,6 +92,10 @@ export class WithdrawalRequest {
   }
 
   async call (sender, args) {
+    if (!args.length) {
+      return { message: { body: '.withdraw <amount|all> <token> <address> [memo]' } }
+    }
+
     args = this.parseArgs(args)
   }
 }
