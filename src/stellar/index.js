@@ -16,4 +16,6 @@ export const txnOpts = {
   fee: STELLAR_MAX_FEE,
   networkPassphrase
 }
+
+export { validateAccount } from './validate_account.js'
 export { sendPayment } from './send_payment.js'
