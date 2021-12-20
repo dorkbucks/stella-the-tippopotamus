@@ -1,4 +1,4 @@
-import { Asset, Memo, MemoID, MemoText } from 'stellar-sdk'
+import { Asset, Memo } from 'stellar-sdk'
 
 import { BigNumber } from '../lib/proxied_bignumber.js'
 import { tokens } from '../tokens/index.js'
@@ -78,10 +78,10 @@ export class WithdrawalRequest {
 
     if (memo) {
       try {
-        new Memo(MemoID, memo)
+        Memo.id(memo)
       } catch (e) {
         try {
-          new Memo(MemoText, memo)
+          Memo.text(memo)
         } catch (e) {
           throw new Error('Memo is invalid')
         }
