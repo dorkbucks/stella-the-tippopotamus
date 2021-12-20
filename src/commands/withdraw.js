@@ -1,9 +1,10 @@
-import { Asset, Memo } from 'stellar-sdk'
+import { Asset, Memo, Keypair } from 'stellar-sdk'
 
 import { BigNumber } from '../lib/proxied_bignumber.js'
 import { tokens } from '../tokens/index.js'
 import { expandSuffixedNum } from '../lib/expand_suffixed_num.js'
-import { server, validateAccount } from '../stellar/index.js'
+import { server, validateAccount, txnOpts, sendPayment, expertTxnURL } from '../stellar/index.js'
+import { walletKeypair } from '../wallet/index.js'
 
 
 const publicKey = /^G[A-Z0-9]{55}$/
@@ -97,5 +98,48 @@ export class WithdrawalRequest {
     }
 
     args = this.parseArgs(args)
+
+    try {
+      await this.validate(validateAccount, sender, args)
+    } catch (e) {
+      return { message: { body: e.message } }
+    }
+
+    const { amount, token, address, memo } = args
+
+    const tokenName = tokens.get(token, 'name')
+    const issuer = tokens.get(token, 'issuer')
+    const asset = new Asset(tokenName, issuer)
+
+    let _memo
+    try {
+      _memo = Memo.id(memo)
+    } catch {
+      try {
+        _memo = Memo.text(memo)
+      } catch {}
+    }
+
+    try {
+      const result = await sendPayment(
+        { server, txnOpts },
+        asset,
+        walletKeypair,
+        Keypair.fromPublicKey(address),
+        _memo
+      )
+
+      const txLink = expertTxnURL(result.tx_hash)
+      return { message: {
+        heading: `${tokenName} withdrawal successful`,
+        body: `[View the transaction on Stellar Expert](${txLink})`
+      }}
+
+    } catch (e) {
+      return { message: {
+        heading: 'Something went wrong. Try withdrawing again?',
+        body: `Error message: **${e.message}**`
+      }}
+    }
   }
 }
