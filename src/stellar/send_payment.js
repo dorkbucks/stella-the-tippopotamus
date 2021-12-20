@@ -26,18 +26,11 @@ export async function sendPayment (config, asset, from, to, amount, memo) {
     txn = txn.build()
     txn.sign(from)
 
-    const result = await server.submitTransaction(txn)
+    return await server.submitTransaction(txn)
 
-    return {
-      address: destination,
-      success: true,
-      txn: result
-    }
   } catch (e) {
     throw {
-      address: destination,
-      success: false,
-      reason: e.message,
+      message: e.message,
       errorData: e?.response?.data
     }
   }
