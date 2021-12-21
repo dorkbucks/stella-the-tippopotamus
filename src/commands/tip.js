@@ -128,7 +128,7 @@ export class Tip {
     )
 
     let amountSent = `**${totalAmount} ${token}**`
-    if (isEach || amountPer < amount) {
+    if (isEach || amountPer.lt(totalAmount)) {
       amountSent = `**${amountPer} ${token} each**`
     }
     const tos = lf.format(recipients.map(({ id }) => `<@${id}>`))
