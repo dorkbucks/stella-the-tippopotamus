@@ -1,13 +1,12 @@
-import Datastore from 'nedb-promises'
-
 import { BigNumber } from './proxied_bignumber.js'
 import { bot } from './bot.js'
+import { getCollection } from '../db/index.js'
 
-const accountsDB = Datastore.create(new URL('../../var/accounts.db', import.meta.url).pathname)
 
 export class Account {
   static async getOrCreate (acctData, tokens) {
-    let account = await accountsDB.findOne({ _id: acctData.id })
+    const accountsCollection = await getCollection('accounts')
+    let account = await accountsCollection.findOne({ _id: acctData.id })
     if (account) {
       return new Account(account, tokens)
     } else {
@@ -15,7 +14,7 @@ export class Account {
       const username = user.username
       const avatar = user.avatarURL()
       account = new Account({ ...acctData, username, avatar }, tokens)
-      await accountsDB.insert(account)
+      await accountsCollection.insertOne(account)
       return account
     }
   }
@@ -60,7 +59,8 @@ export class Account {
   }
 
   async save () {
-    await accountsDB.update({ _id: this._id }, this)
+    const accountsCollection = await getCollection('accounts')
+    await accountsCollection.updateOne({ _id: this._id }, { $set: this })
     return this
   }
 }
