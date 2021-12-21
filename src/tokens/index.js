@@ -29,8 +29,8 @@ function list (...props) {
   }, {}))
 }
 
-function isSupported (str) {
-  return !!get(str)
+function isSupported (str='') {
+  return !!get(str, 'name')
 }
 
 export const tokens = {

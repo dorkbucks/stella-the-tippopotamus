@@ -32,3 +32,10 @@ test('.get', (t) => {
   t.equal(tokens.get('dork', 'none'), undefined, 'Return undefined if non-existent prop')
   t.end()
 })
+
+test('.isSupported', (t) => {
+  t.ok(tokens.isSupported('dork'))
+  t.notOk(tokens.isSupported())
+  t.notOk(tokens.isSupported('bork'))
+  t.end()
+})
