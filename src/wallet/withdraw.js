@@ -1,12 +1,10 @@
-import Datastore from 'nedb-promises'
 import { Asset, Memo, Keypair } from 'stellar-sdk'
 
 import { tokens } from '../tokens/index.js'
 import { server, txnOpts, sendPayment } from '../stellar/index.js'
 import { walletKeypair } from './config.js'
+import { getCollection } from '../db/index.js'
 
-
-const withdrawalsDB = Datastore.create(new URL('../../var/withdrawals.db', import.meta.url).pathname)
 
 export async function withdraw (account, { amount, token, address, memo }) {
   const tokenName = tokens.get(token, 'name')
@@ -41,9 +39,11 @@ export async function withdraw (account, { amount, token, address, memo }) {
     date: result.created_at
   }
 
+  const withdrawalsCollection = await getCollection('withdrawals')
+
   await Promise.all([
     debitedAccount.save(),
-    withdrawalsDB.insert(withdrawal)
+    withdrawalsCollection.insertOne(withdrawal)
   ])
 
   return result
