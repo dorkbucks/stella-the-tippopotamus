@@ -1,23 +1,20 @@
-import dotenv from 'dotenv'
-dotenv.config()
-
 import { Server } from 'stellar-sdk'
-import Datastore from 'nedb-promises'
 
 import { server } from '../stellar/index.js'
 import { Account } from '../lib/account.js'
 import { tokens } from '../tokens/index.js'
 import { walletAddress } from './config.js'
+import { getCollection } from '../db/index.js'
 
 
-const depositsDB = Datastore.create(new URL('../../var/deposits.db', import.meta.url).pathname)
 const TOKENS = tokens.list('name')
 
 export async function startDepositWatcher () {
-  const lastDeposit = await depositsDB.findOne().sort({ date: -1 })
+  const depositsCollection = getCollection('deposits')
+  const lastDeposit = await depositsCollection.findOne({}, { sort: { date: -1 } })
   const pagingToken = lastDeposit?.pagingToken || 'now'
   const handlers = {
-    onmessage: depositHandler(walletAddress, depositsDB, Account),
+    onmessage: depositHandler(walletAddress, depositsCollection, Account),
     onerror: (error) => console.log(error)
   }
 
@@ -29,7 +26,7 @@ export async function startDepositWatcher () {
                .stream(handlers)
 }
 
-export function depositHandler (address, depositsDB, Account) {
+export function depositHandler (address, depositsCollection, Account) {
   return async function (message) {
     const {
       type,
@@ -67,7 +64,7 @@ export function depositHandler (address, depositsDB, Account) {
 
     await Promise.all([
       creditedAccount.save(),
-      depositsDB.insert(deposit)
+      depositsCollection.insertOne(deposit)
     ])
 
     console.log(`Credited ${amount} ${token} to user account ${memo}`)
