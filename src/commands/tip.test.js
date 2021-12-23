@@ -88,6 +88,42 @@ test('#parseArgs', (t) => {
     _t.end()
   })
 
+  t.test('Recipient passed in', (_t) => {
+    const recipient = { id: id1 }
+
+    t.test('valid command', (_t) => {
+      const { args } = parseCommand('.', `.tip 100 dork`)
+      const parsedArgs = tip.parseArgs(args, recipient)
+      t.equal(100, parsedArgs.amount)
+      t.equal('dork', parsedArgs.token)
+      _t.end()
+    })
+
+    t.test('ignore each modifier', (_t) => {
+      const { args } = parseCommand('.', `.tip 100 dork each`)
+      const parsedArgs = tip.parseArgs(args, recipient)
+      t.equal(100, parsedArgs.amount)
+      t.equal('dork', parsedArgs.token)
+      t.notOk(parsedArgs.modifier)
+      _t.end()
+    })
+
+    t.test('token first', (_t) => {
+      const { args } = parseCommand('.', `.tip dork 100`)
+      const parsedArgs = tip.parseArgs(args, recipient)
+      t.same(parsedArgs, null)
+      _t.end()
+    })
+
+    t.test('includes user id', (_t) => {
+      const { args } = parseCommand('.', `.tip <@!${id1}> 100 dork`)
+      const parsedArgs = tip.parseArgs(args, recipient)
+      t.same(parsedArgs, null)
+      _t.end()
+    })
+
+    _t.end()
+  })
   t.end()
 })
 

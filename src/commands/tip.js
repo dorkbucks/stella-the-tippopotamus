@@ -16,17 +16,24 @@ const modifier = /^each?/i
 export class Tip {
   static channelTypes = ['GUILD_TEXT']
 
-  parseArgs (args) {
+  parseArgs (args, recipient) {
     let argsObj = {}
     for (let i = 0, len = args.length; i < len; i++) {
       let curr = args[i]
       let next = args[i + 1]
 
       let user = curr.match(userID)
+      let isAmount = amount.test(curr)
 
-      if (i === 0 && !user) return null
+      if (recipient) {
+        // Recipient was passed in, amount should be first
+        if (i === 0 && !isAmount) return null
+      } else {
+        // No recipient, user ID(s) should be first
+        if (i === 0 && !user) return null
+      }
 
-      if (user) {
+      if (!recipient && user) {
         const nextIsUserID = userID.test(next)
         const nextIsAmount = amount.test(next)
         const nextIsNotUserOrAmount = nextIsUserID ? nextIsAmount : !nextIsAmount
@@ -35,14 +42,15 @@ export class Tip {
         argsObj.recipientIDs.push(user.groups.id)
       }
 
-      if (amount.test(curr)) {
+      if (isAmount) {
         const isToken = next && token.test(next)
         if (!isToken) return null
         argsObj.amount = curr === 'all' ? curr : expandSuffixedNum(curr)
         argsObj.token = next
+        continue
       }
 
-      if (modifier.test(curr)) {
+      if (!recipient && modifier.test(curr)) {
         argsObj.modifier = curr
       }
     }
@@ -62,15 +70,15 @@ export class Tip {
     return [totalAmount, amountPer]
   }
 
-  async call (sender, args) {
-    args = this.parseArgs(args)
+  async call (sender, args, recipient) {
+    args = this.parseArgs(args, recipient)
 
     if (args === null) {
       return { message: { body: `I don't understand what you mean` } }
     }
 
-    const { recipientIDs, amount, modifier } = args
-    const recipients = uniquify(recipientIDs).map(id => ({ id }))
+    const { recipientIDs = [], amount, modifier } = args
+    const recipients = recipient ? [recipient] : uniquify(recipientIDs).map(id => ({ id }))
     const token = tokens.get(args.token, 'name')
 
     if (!token) {
@@ -131,8 +139,8 @@ export class Tip {
     if (isEach || amountPer.lt(totalAmount)) {
       amountSent = `**${amountPer} ${token} each**`
     }
-    const tos = lf.format(recipients.map(({ id }) => `<@${id}>`))
 
+    const tos = lf.format(recipientAccounts.map(({ _id }) => `<@${_id}>`))
     return {
       message: {
         body: `<@${sender._id}> sent ${tos} ${emoji} ${amountSent}`

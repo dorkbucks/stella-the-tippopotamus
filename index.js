@@ -36,13 +36,26 @@ bot.on('messageCreate', async (msg) => {
   if (!Command || !Command.channelTypes.includes(channelType)) return
 
   const cmd = new Command()
-  const sender = await Account.getOrCreate({
+
+  let sender = Account.getOrCreate({
     id: author.id,
     username: author.username,
     avatar: author.avatarURL()
   }, TOKENS)
 
-  const result = await cmd.call(sender, args)
+  let recipient
+  if (msg.type === 'REPLY') {
+    const { id, username } = msg.mentions.repliedUser
+    recipient = Account.getOrCreate({
+      id,
+      username,
+      avatar: msg.mentions.repliedUser.avatarURL()
+    }, TOKENS)
+  }
+
+  ;[sender, recipient] = await Promise.all([sender, recipient])
+
+  const result = await cmd.call(sender, args, recipient)
   const {
     heading='',
     icon='',
