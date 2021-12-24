@@ -7,6 +7,7 @@ import { bot } from './src/lib/bot.js'
 import { parseCommand, commands } from './src/commands/index.js'
 import { tokens } from './src/tokens/index.js'
 import { Account } from './src/lib/account.js'
+import { startActivityHandler } from './src/activity/index.js'
 
 
 const {
@@ -20,7 +21,11 @@ const {
 
 const TOKENS = tokens.list('name')
 
-bot.once('ready', () => console.log(`Tipbot logged in as ${DISCORD_CLIENT_ID}`))
+bot.once('ready', async () => {
+  console.log(`Tipbot logged in as ${DISCORD_CLIENT_ID}`)
+  await startActivityHandler(bot)
+})
+
 bot.on('messageCreate', async (msg) => {
   const { channelId, content, author } = msg
   if (author.id === DISCORD_CLIENT_ID) return
