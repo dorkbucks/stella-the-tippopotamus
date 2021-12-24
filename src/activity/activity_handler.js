@@ -5,11 +5,17 @@ import { tokens } from '../tokens/index.js'
 
 const TOKENS = tokens.list()
 
+function isAcceptableMessage (text) {
+  text = text.toLowerCase()
+  return text.length > 1 && text !== 'ty'
+}
+
 function messageHandler (collection) {
   return async function onMessageCreate (msg) {
     const { content, author, createdAt, id } = msg
 
     if (msg.channel.type !== 'GUILD_TEXT' ||  author.bot) return
+    if (!isAcceptableMessage(content)) return
 
     const update = {
       $set: {
