@@ -3,6 +3,8 @@ import { uniquify } from '../lib/uniquify.js'
 import { Account } from '../lib/account.js'
 import { tokens } from '../tokens/index.js'
 import { expandSuffixedNum } from '../lib/expand_suffixed_num.js'
+import { getCollection } from '../db/index.js'
+import { getActiveUsers } from '../activity/index.js'
 
 
 const TOKENS = tokens.list()
@@ -79,15 +81,24 @@ export class Tip {
     return [totalAmount, amountPer]
   }
 
-  async call (sender, args, { recipient }) {
+  async call (sender, args, { recipient, serverID }) {
     args = this.parseArgs(args, recipient)
 
     if (args === null) {
       return { message: { body: `I don't understand what you mean` } }
     }
 
-    const { recipientIDs = [], amount, modifier } = args
-    const recipients = recipient ? [recipient] : uniquify(recipientIDs).map(id => ({ id }))
+    const { recipientIDs = [], classifier = '', amount, modifier } = args
+    let recipients = recipient ? [recipient] : uniquify(recipientIDs).map(id => ({ id }))
+    if (classifier === 'active') {
+      const accountsCollection = await getCollection('accounts')
+      const activeAccounts = await getActiveUsers(accountsCollection, serverID, 30, 30)
+      recipients = activeAccounts.filter(({ _id }) => _id !== sender._id)
+      if (!recipients.length) {
+        return { message: { body: 'There are no active users' } }
+      }
+    }
+
     const token = tokens.get(args.token, 'name')
 
     if (!token) {
