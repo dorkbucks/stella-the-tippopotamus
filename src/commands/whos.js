@@ -13,7 +13,7 @@ export class Whos {
     classifier = classifier.toLowerCase()
 
     if (!Whos.classifiers.includes(classifier)) {
-      return { message: { body: `Try \`.whos ${Whos.classifiers.join('|')}\``} }
+      return { message: { body: `Try\n\`.whos ${Whos.classifiers.join('|')}\``} }
     }
 
     const accountsCollection = await getCollection('accounts')
