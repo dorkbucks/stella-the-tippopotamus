@@ -13,8 +13,12 @@ function messageHandler (collection) {
 
     const update = {
       $set: {
-        lastActive: createdAt,
-        lastMessageID: id
+        activity: {
+          [msg.guild.id]: {
+            lastActive: createdAt,
+            lastMessageID: id
+          }
+        }
       }
     }
 

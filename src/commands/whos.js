@@ -17,7 +17,7 @@ export class Whos {
     }
 
     const accountsCollection = await getCollection('accounts')
-    const activeUsers = await getActiveUsers(accountsCollection, 30, 30)
+    const activeUsers = await getActiveUsers(accountsCollection, serverID, 30, 30)
     const activeUsersList = lf.format(activeUsers.map(({ _id }) => `<@${_id}>`))
 
     const heading = `${ucFirst(classifier)} users`
