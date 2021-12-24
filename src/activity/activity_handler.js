@@ -9,7 +9,7 @@ function messageHandler (collection) {
   return async function onMessageCreate (msg) {
     const { content, author, createdAt, id } = msg
 
-    if (author.bot) return
+    if (msg.channel.type !== 'GUILD_TEXT' ||  author.bot) return
 
     const update = {
       $set: {
