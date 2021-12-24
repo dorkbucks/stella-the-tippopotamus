@@ -9,6 +9,7 @@ const TOKENS = tokens.list()
 const lf = new Intl.ListFormat('en')
 
 const userID = /^<@!?(?<id>\d{17,19})>$/
+const classifier = /^active$/i
 const amount = /^\d?.?\d+[k|m|b]?$|all?\b/i
 const token = /[a-z]+/i
 const modifier = /^each?/i
@@ -23,14 +24,17 @@ export class Tip {
       let next = args[i + 1]
 
       let user = curr.match(userID)
+      let isClassifier = classifier.test(curr)
       let isAmount = amount.test(curr)
 
       if (recipient) {
         // Recipient was passed in, amount should be first
         if (i === 0 && !isAmount) return null
       } else {
-        // No recipient, user ID(s) should be first
-        if (i === 0 && !user) return null
+        // No recipient, user ID(s) or classifier should be first
+        if (i === 0 && !(user || isClassifier)) {
+          return null
+        }
       }
 
       if (!recipient && user) {
@@ -40,6 +44,11 @@ export class Tip {
         if (nextIsNotUserOrAmount) return null
         argsObj.recipientIDs = argsObj.recipientIDs || []
         argsObj.recipientIDs.push(user.groups.id)
+      }
+
+      if (!recipient && isClassifier) {
+        if (!amount.test(next)) return null
+        argsObj.classifier = curr
       }
 
       if (isAmount) {
