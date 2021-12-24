@@ -70,7 +70,7 @@ export class Tip {
     return [totalAmount, amountPer]
   }
 
-  async call (sender, args, recipient) {
+  async call (sender, args, { recipient }) {
     args = this.parseArgs(args, recipient)
 
     if (args === null) {

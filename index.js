@@ -60,7 +60,14 @@ bot.on('messageCreate', async (msg) => {
 
   ;[sender, recipient] = await Promise.all([sender, recipient])
 
-  const result = await cmd.call(sender, args, recipient)
+  const serverID = msg?.guild?.id
+
+  const result = await cmd.call(
+    sender,
+    args,
+    { recipient, serverID }
+  )
+
   const {
     heading='',
     icon='',

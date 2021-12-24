@@ -9,7 +9,7 @@ export class Whos {
   static channelTypes = ['GUILD_TEXT']
   static classifiers = ['active']
 
-  async call (sender, [classifier]) {
+  async call (sender, [classifier], { serverID }) {
     classifier = classifier.toLowerCase()
 
     if (!Whos.classifiers.includes(classifier)) {
