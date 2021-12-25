@@ -101,6 +101,14 @@ export class Tip {
       }
     }
 
+    if (classifier === 'everyone') {
+      const members = await server.members.list({ limit: 1000 })
+      recipients = members.map(m => m.user).filter(u => !u.bot && u.id !== sender._id)
+      if (!recipients.length) {
+        return { message: { body: 'No users found' } }
+      }
+    }
+
     const token = tokens.get(args.token, 'name')
 
     if (!token) {
