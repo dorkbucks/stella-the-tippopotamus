@@ -10,11 +10,12 @@ import { getActiveUsers } from '../activity/index.js'
 const TOKENS = tokens.list()
 const lf = new Intl.ListFormat('en')
 
-const userID = /^<@!?(?<id>\d{17,19})>$/
-const classifier = /^active$/i
-const amount = /^\d?.?\d+[k|m|b]?$|all?\b/i
-const token = /[a-z]+/i
-const modifier = /^each?/i
+const userRE = /^<@!?(?<id>\d{17,19})>$/
+const roleRE = /^<@&?(?<roleid>\d{17,19})>$/
+const classifierRE = /^active$/i
+const amountRE = /^\d?.?\d+[k|m|b]?$|all?\b/i
+const tokenRE = /[a-z]+/i
+const modifierRE = /^each?/i
 
 export class Tip {
   static channelTypes = ['GUILD_TEXT']
@@ -25,43 +26,43 @@ export class Tip {
       let curr = args[i]
       let next = args[i + 1]
 
-      let user = curr.match(userID)
-      let isClassifier = classifier.test(curr)
-      let isAmount = amount.test(curr)
+      let userMatch = curr.match(userRE)
+      let isClassifier = classifierRE.test(curr)
+      let isAmount = amountRE.test(curr)
 
       if (recipient) {
         // Recipient was passed in, amount should be first
         if (i === 0 && !isAmount) return null
       } else {
         // No recipient, user ID(s) or classifier should be first
-        if (i === 0 && !(user || isClassifier)) {
+        if (i === 0 && !(userMatch || isClassifier)) {
           return null
         }
       }
 
-      if (!recipient && user) {
-        const nextIsUserID = userID.test(next)
-        const nextIsAmount = amount.test(next)
+      if (!recipient && userMatch) {
+        const nextIsUserID = userRE.test(next)
+        const nextIsAmount = amountRE.test(next)
         const nextIsNotUserOrAmount = nextIsUserID ? nextIsAmount : !nextIsAmount
         if (nextIsNotUserOrAmount) return null
         argsObj.recipientIDs = argsObj.recipientIDs || []
-        argsObj.recipientIDs.push(user.groups.id)
+        argsObj.recipientIDs.push(userMatch.groups.id)
       }
 
       if (!recipient && isClassifier) {
-        if (!amount.test(next)) return null
+        if (!amountRE.test(next)) return null
         argsObj.classifier = curr
       }
 
       if (isAmount) {
-        const isToken = next && token.test(next)
+        const isToken = next && tokenRE.test(next)
         if (!isToken) return null
         argsObj.amount = curr === 'all' ? curr : expandSuffixedNum(curr)
         argsObj.token = next
         continue
       }
 
-      if (!recipient && modifier.test(curr)) {
+      if (!recipient && modifierRE.test(curr)) {
         argsObj.modifier = curr
       }
     }
