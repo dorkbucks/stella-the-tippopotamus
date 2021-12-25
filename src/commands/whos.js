@@ -9,7 +9,7 @@ export class Whos {
   static channelTypes = ['GUILD_TEXT']
   static classifiers = ['active']
 
-  async call (sender, [classifier], { serverID }) {
+  async call (sender, [classifier], { server }) {
     classifier = classifier.toLowerCase()
 
     if (!Whos.classifiers.includes(classifier)) {
@@ -17,7 +17,7 @@ export class Whos {
     }
 
     const accountsCollection = await getCollection('accounts')
-    const activeUsers = await getActiveUsers(accountsCollection, serverID, 30, 30)
+    const activeUsers = await getActiveUsers(accountsCollection, server.id, 30, 30)
     const activeUsersList = lf.format(activeUsers.map(({ _id }) => `<@${_id}>`))
 
     const heading = `${ucFirst(classifier)} users`
