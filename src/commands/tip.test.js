@@ -162,6 +162,43 @@ test('#parseArgs', (t) => {
     _t.end()
   })
 
+  t.test('@everyone classifier', (_t) => {
+    t.test('valid command', (_t) => {
+      const { args } = parseCommand('.', `.tip @everyone 100 dork`)
+      const parsedArgs = tip.parseArgs(args)
+      t.equal('everyone', parsedArgs.classifier)
+      t.equal(100, parsedArgs.amount)
+      t.equal('dork', parsedArgs.token)
+      _t.end()
+    })
+
+    t.test('valid command + each', (_t) => {
+      const { args } = parseCommand('.', `.tip @everyone 100 dork each`)
+      const parsedArgs = tip.parseArgs(args)
+      t.equal('everyone', parsedArgs.classifier)
+      t.equal(100, parsedArgs.amount)
+      t.equal('dork', parsedArgs.token)
+      t.equal('each', parsedArgs.modifier)
+      _t.end()
+    })
+
+    t.test('wrong order', (_t) => {
+      const { args } = parseCommand('.', `.tip @everyone dork 100 each`)
+      const parsedArgs = tip.parseArgs(args)
+      t.same(parsedArgs, null)
+      _t.end()
+    })
+
+    t.test('wrong order', (_t) => {
+      const { args } = parseCommand('.', `.tip 100 @everyone dork`)
+      const parsedArgs = tip.parseArgs(args)
+      t.same(parsedArgs, null)
+      _t.end()
+    })
+
+    _t.end()
+  })
+
   t.end()
 })
 

@@ -12,7 +12,7 @@ const lf = new Intl.ListFormat('en')
 
 const userRE = /^<@!?(?<id>\d{17,19})>$/
 const roleRE = /^<@&?(?<roleid>\d{17,19})>$/
-const classifierRE = /^active$/i
+const classifierRE = /^@?(?<classifier>active|everyone)$/i
 const amountRE = /^\d?.?\d+[k|m|b]?$|all?\b/i
 const tokenRE = /[a-z]+/i
 const modifierRE = /^each?/i
@@ -27,7 +27,7 @@ export class Tip {
       let next = args[i + 1]
 
       let userMatch = curr.match(userRE)
-      let isClassifier = classifierRE.test(curr)
+      let classifierMatch = curr.match(classifierRE)
       let isAmount = amountRE.test(curr)
 
       if (recipient) {
@@ -35,7 +35,7 @@ export class Tip {
         if (i === 0 && !isAmount) return null
       } else {
         // No recipient, user ID(s) or classifier should be first
-        if (i === 0 && !(userMatch || isClassifier)) {
+        if (i === 0 && !(userMatch || classifierMatch)) {
           return null
         }
       }
@@ -49,9 +49,9 @@ export class Tip {
         argsObj.recipientIDs.push(userMatch.groups.id)
       }
 
-      if (!recipient && isClassifier) {
+      if (!recipient && classifierMatch) {
         if (!amountRE.test(next)) return null
-        argsObj.classifier = curr
+        argsObj.classifier = classifierMatch.groups.classifier
       }
 
       if (isAmount) {
