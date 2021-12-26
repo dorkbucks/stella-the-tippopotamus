@@ -82,7 +82,9 @@ export class Tip {
     return [totalAmount, amountPer]
   }
 
-  async call (sender, args, { recipient, server }) {
+  async getRecipientsByClassifier (classifier, { collection, server }) {}
+
+  async call (sender, args, { recipient, server, channel }) {
     args = this.parseArgs(args, recipient)
 
     if (args === null) {
@@ -94,7 +96,7 @@ export class Tip {
 
     if (classifier === 'active') {
       const accountsCollection = await getCollection('accounts')
-      const activeAccounts = await getActiveUsers(accountsCollection, server.id, 30, 30)
+      const activeAccounts = await getActiveUsers(accountsCollection, server.id, channel.id, 30, 30)
       recipients = activeAccounts.filter(({ _id }) => _id !== sender._id)
       if (!recipients.length) {
         return { message: { body: 'There are no active users' } }

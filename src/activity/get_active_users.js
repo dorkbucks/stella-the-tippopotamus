@@ -5,9 +5,9 @@ import { tokens } from '../tokens/index.js'
 const TOKENS = tokens.list()
 
 
-export async function getActiveUsers (collection, serverID, lastNMinutes=30, limit=30) {
+export async function getActiveUsers (collection, serverID, channelID, lastNMinutes=30, limit=30) {
   const query = {
-    [`activity.${serverID}.lastActive`]: {
+    [`activity.${serverID}.${channelID}.lastActive`]: {
       $gte: new Date(Date.now() - lastNMinutes * 60000)
     }
   }

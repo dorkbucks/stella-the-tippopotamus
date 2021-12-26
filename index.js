@@ -65,7 +65,7 @@ bot.on('messageCreate', async (msg) => {
   const result = await cmd.call(
     sender,
     args,
-    { recipient, server }
+    { recipient, server, channel: msg.channel }
   )
 
   const {
