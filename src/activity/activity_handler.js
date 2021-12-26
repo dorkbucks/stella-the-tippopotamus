@@ -10,7 +10,7 @@ function isAcceptableMessage (text) {
   return text.length > 1 && text !== 'ty'
 }
 
-function messageHandler (collection) {
+function messageCreateHandler (collection) {
   return async function onMessageCreate (msg) {
     const { content, author, createdAt, id } = msg
 
@@ -57,5 +57,5 @@ function messageHandler (collection) {
 
 export async function startActivityHandler (bot) {
   const accountsCollection = await getCollection('accounts')
-  bot.on('messageCreate', messageHandler(accountsCollection))
+  bot.on('messageCreate', messageCreateHandler(accountsCollection))
 }
