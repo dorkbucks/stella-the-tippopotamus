@@ -1,0 +1,6 @@
+.env
+var/
+.nyc_output/
+.node_modules
+.git
+.ignore
