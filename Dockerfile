@@ -1,8 +1,11 @@
 FROM node:16.13.1-slim as base
 MAINTAINER rubberdork <hi@rubberdork.com>
+
+RUN mkdir /app && chown -R node:node /app
 WORKDIR /app
-COPY package*.json ./
-COPY . .
+USER node
+COPY --chown=node:node package*.json ./
+COPY --chown=node:node . .
 
 FROM base as production
 ENV NODE_ENV=production
