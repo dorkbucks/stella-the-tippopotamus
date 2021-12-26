@@ -1,5 +1,4 @@
-FROM node:16.13.1 as base
-
+FROM node:16.13.1-slim as base
 MAINTAINER rubberdork <hi@rubberdork.com>
 WORKDIR /app
 COPY package*.json ./
