@@ -99,7 +99,7 @@ export class Tip {
       const activeAccounts = await getActiveUsers(accountsCollection, server.id, channel.id, 30, 30)
       recipients = activeAccounts.filter(({ _id }) => _id !== sender._id)
       if (!recipients.length) {
-        return { message: { body: 'There are no active users' } }
+        return { message: { body: 'Found no other active users in this channel' } }
       }
     }
 
