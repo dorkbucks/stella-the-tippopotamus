@@ -9,10 +9,10 @@ COPY --chown=node:node . .
 
 FROM base as production
 ENV NODE_ENV=production
-RUN npm install
+RUN npm install && npm cache clean --force
 CMD ["npm", "start"]
 
 FROM base as development
 ENV NODE_ENV=development
-RUN npm install
+RUN npm install && npm cache clean --force
 CMD ["npm", "run", "dev"]
