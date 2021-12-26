@@ -60,12 +60,13 @@ bot.on('messageCreate', async (msg) => {
 
   ;[sender, recipient] = await Promise.all([sender, recipient])
 
-  const server = msg?.guild
+  const server = msg.guild
+  const channel = msg.channel
 
   const result = await cmd.call(
     sender,
     args,
-    { recipient, server, channel: msg.channel }
+    { recipient, server, channel }
   )
 
   const {
