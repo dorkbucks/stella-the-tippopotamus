@@ -90,7 +90,7 @@ bot.on('messageCreate', async (msg) => {
         .setImage(imageName)
         .setFooter(footer)
 
-  const channel = channelType === 'DM' ? author : msg.channel
-  channel.send({ embeds: [embed], files })
+  const send = channelType === 'DM' ? author.send.bind(author) : msg.reply.bind(msg)
+  send({ embeds: [embed], files })
 })
 bot.login(DISCORD_TOKEN)
