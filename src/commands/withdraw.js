@@ -101,6 +101,11 @@ export class WithdrawalRequest {
 
     args = this.parseArgs(args)
 
+    if (args.amount === 'all' && tokens.isSupported(args.token)) {
+      const token = tokens.get(args.token, 'name')
+      args.amount = sender.balances[token]
+    }
+
     try {
       await this.validate(validateAccount, sender, args)
     } catch (e) {
