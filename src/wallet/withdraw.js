@@ -30,7 +30,7 @@ export async function withdraw (account, { amount, token, address, memo }) {
     _memo
   )
 
-  const debitedAccount = account.debit(token, amount)
+  const debitedAccount = account.debit(tokenName, amount)
   const withdrawal = {
     accountID: account._id,
     amount,
