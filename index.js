@@ -8,6 +8,7 @@ import { parseCommand, commands } from './src/commands/index.js'
 import { tokens } from './src/tokens/index.js'
 import { Account } from './src/lib/account.js'
 import { startActivityHandler } from './src/activity/index.js'
+import { startDepositWatcher } from './src/wallet/deposit_watcher.js'
 
 
 const {
@@ -20,6 +21,8 @@ const {
 } = process.env
 
 const TOKENS = tokens.list('name')
+
+await startDepositWatcher()
 
 bot.once('ready', async () => {
   console.log(`Tipbot logged in as ${DISCORD_CLIENT_ID}`)
