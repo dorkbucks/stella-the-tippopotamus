@@ -56,6 +56,7 @@ export class WithdrawalRequest {
 
   async validate (accountValidator, sender, { amount, token, address, memo }) {
     const tokenName = tokens.get(token, 'name')
+    const tokenCode = tokens.get(token, 'code')
     amount = BigNumber(amount)
 
     if (amount.lte(0)) {
@@ -71,7 +72,7 @@ export class WithdrawalRequest {
     }
 
     const issuer = tokens.get(token, 'issuer')
-    const asset = new Asset(tokenName, issuer)
+    const asset = new Asset(tokenCode, issuer)
 
     const { isValid, reason } = await accountValidator(server, asset, address, false)
     if (!isValid) {
