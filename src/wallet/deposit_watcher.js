@@ -10,7 +10,7 @@ import { getCollection } from '../db/index.js'
 const TOKENS = tokens.list('name')
 
 export async function startDepositWatcher () {
-  const depositsCollection = getCollection('deposits')
+  const depositsCollection = await getCollection('deposits')
   const lastDeposit = await depositsCollection.findOne({}, { sort: { date: -1 } })
   const pagingToken = lastDeposit?.pagingToken || 'now'
   const handlers = {
@@ -43,7 +43,7 @@ export function depositHandler (address, depositsCollection, Account) {
 
     console.log('Payment transaction received')
 
-    if (type !== 'payment' && to !== address && asset_type === 'native' && !transaction_successful) {
+    if (type !== 'payment' || to !== address || asset_type === 'native' || !transaction_successful) {
       console.log(`Not a transaction we're interested in. Bailing`)
       return
     }
