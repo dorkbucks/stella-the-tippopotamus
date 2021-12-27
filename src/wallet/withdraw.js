@@ -35,7 +35,7 @@ export async function withdraw (account, { amount, token, address, memo }) {
     accountID: account._id,
     amount,
     token,
-    to,
+    to: address,
     txnHash: result.hash,
     date: result.created_at
   }
