@@ -8,8 +8,10 @@ export const DorkBucks = {
     image: ''
   },
   aliases: [
-    'dorkbucks',
     'dork',
+    'dorks',
+    'dorkbuck',
+    'dorkbucks',
     'duck',
     'ducks'
   ]
