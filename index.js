@@ -35,8 +35,6 @@ bot.on('messageCreate', async (msg) => {
 
   const channelType = msg.channel.type
 
-  // NOTE: Temporary while in private dev
-  if (channelType === 'GUILD_TEXT' && channelId !== CHANNEL_ID) return
   if (!content.startsWith(SIGIL)) return
   const { command, args } = parseCommand(SIGIL, content)
   const Command = commands.get(command)
