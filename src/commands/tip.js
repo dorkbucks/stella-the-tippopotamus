@@ -167,12 +167,14 @@ export class Tip {
       [updatedSenderAccount, ...updatedRecipientAccounts].map(account => account.save())
     )
 
-    let amountSent = `**${totalAmount} ${token}**`
+    let amountSent = `**${totalAmount.toFormat()} ${token}**`
     if (isEach || amountPer.lt(totalAmount)) {
-      amountSent = `**${amountPer} ${token} each**`
+      amountSent = `**${amountPer.toFormat()} ${token} each**`
     }
 
+    // TODO: Update this to `discord_id` (?) when we switch to snowflake ids
     const tos = lf.format(recipientAccounts.map(({ _id }) => `<@${_id}>`))
+
     return {
       message: {
         body: `<@${sender._id}> sent ${tos} ${emoji} ${amountSent}`
