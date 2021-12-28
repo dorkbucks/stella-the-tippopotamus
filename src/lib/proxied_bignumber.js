@@ -1,7 +1,6 @@
-import dotenv from 'dotenv'
-dotenv.config()
-
+import { env } from './env.js'
 import { default as Big } from 'bignumber.js'
+
 
 const DECIMAL_PLACES = 7
 
@@ -11,7 +10,7 @@ Big.config({
   EXPONENTIAL_AT: [-8, 20],
 })
 
-Big.DEBUG = process.env.NODE_ENV !== 'production'
+Big.DEBUG = env.NODE_ENV !== 'production'
 
 export const BigNumber = new Proxy(Big, {
   construct: function (target, args) {

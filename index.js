@@ -1,8 +1,6 @@
-import dotenv from 'dotenv'
-dotenv.config()
-
 import { Client, Intents, MessageAttachment, MessageEmbed } from 'discord.js'
 
+import { env } from './src/lib/env.js'
 import { bot } from './src/lib/bot.js'
 import { parseCommand, commands } from './src/commands/index.js'
 import { tokens } from './src/tokens/index.js'
@@ -18,7 +16,7 @@ const {
   DISCORD_GUILD_ID,
   SIGIL,
   CHANNEL_ID
-} = process.env
+} = env
 
 const TOKENS = tokens.list('name')
 

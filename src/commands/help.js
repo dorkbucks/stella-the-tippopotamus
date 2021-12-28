@@ -1,10 +1,8 @@
-import dotenv from 'dotenv'
-dotenv.config()
-
+import { env } from '../lib/env.js'
 import { tokens } from '../tokens/index.js'
 
 
-const { SIGIL } = process.env
+const { SIGIL } = env
 const TOKENS = tokens.list('name', 'logo', 'aliases')
 
 function formatTokens (tokenList) {

@@ -1,8 +1,7 @@
-import dotenv from 'dotenv'
-dotenv.config()
-
 import { Keypair } from 'stellar-sdk'
 
+import { env } from '../lib/env.js'
 
-export const walletAddress = process.env.ACCOUNT_PUBLIC_KEY
-export const walletKeypair = Keypair.fromSecret(process.env.ACCOUNT_SECRET_KEY)
+
+export const walletAddress = env.ACCOUNT_PUBLIC_KEY
+export const walletKeypair = Keypair.fromSecret(env.ACCOUNT_SECRET_KEY)

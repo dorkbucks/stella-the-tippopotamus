@@ -1,7 +1,6 @@
-import dotenv from 'dotenv'
-dotenv.config()
-
 import { Client, Intents } from 'discord.js'
+
+import { env } from './env.js'
 
 
 export const bot = new Client({
@@ -15,4 +14,4 @@ export const bot = new Client({
     'CHANNEL'
   ]
 })
-bot.token = process.env.DISCORD_TOKEN
+bot.token = env.DISCORD_TOKEN

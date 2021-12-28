@@ -1,11 +1,9 @@
-import dotenv from 'dotenv'
-dotenv.config()
-
 import { Networks, Server } from 'stellar-sdk'
 
+import { env } from '../lib/env.js'
 
-const { NODE_ENV, STELLAR_MAX_FEE } = process.env
 
+const { NODE_ENV, STELLAR_MAX_FEE } = env
 const testnet = NODE_ENV === 'development'
 const NETWORK = testnet ? 'TESTNET' : 'PUBLIC'
 const networkPassphrase = Networks[NETWORK]
