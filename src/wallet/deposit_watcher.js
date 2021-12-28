@@ -41,8 +41,6 @@ export function depositHandler (address, depositsCollection, Account) {
       paging_token
     } = message
 
-    console.log('Payment transaction received')
-
     if (type !== 'payment' || to !== address || asset_type === 'native' || !transaction_successful) {
       console.log(`Not a transaction we're interested in. Bailing`)
       return
@@ -52,8 +50,6 @@ export function depositHandler (address, depositsCollection, Account) {
     if (processedDeposit) return
 
     const { memo } = await message.transaction()
-    const account = await Account.getOrCreate({ id: memo }, TOKENS)
-    const creditedAccount = account.credit(token, amount)
     const tokenName = tokens.get(asset_code, 'name')
     const deposit = {
       accountID: memo,
@@ -65,13 +61,21 @@ export function depositHandler (address, depositsCollection, Account) {
       date: created_at
     }
 
+    console.log('Deposit received')
+    console.log(deposit)
+    console.log()
+
+    const account = await Account.getOrCreate({ id: memo }, TOKENS)
+    const creditedAccount = account.credit(tokenName, amount)
 
     try {
       await Promise.all([
         creditedAccount.save(),
         depositsCollection.insertOne(deposit)
       ])
-      console.log(`Credited ${amount} ${tokenName} to user account ${memo}`)
+      console.log(`Credited ${amount} ${tokenName} to ${creditedAccount.username}`)
+      console.log(JSON.stringify((({_id, username, balances}) => ({_id, username, balances}))(creditedAccount), null, 2))
+      console.log()
     } catch (e) {
       console.log(e)
     }
