@@ -5,6 +5,7 @@ import { Account } from '../lib/account.js'
 import { tokens } from '../tokens/index.js'
 import { walletAddress } from './config.js'
 import { getCollection } from '../db/index.js'
+import { deposit } from '../wallet/index.js'
 
 
 const TOKENS = tokens.list('name')
@@ -49,31 +50,23 @@ export function depositHandler (address, depositsCollection, Account) {
     const processedDeposit = await depositsCollection.findOne({ txnHash: transaction_hash })
     if (processedDeposit) return
 
-    const { memo } = await message.transaction()
-    const tokenName = tokens.get(asset_code, 'name')
-    const deposit = {
-      accountID: memo,
-      amount,
-      tokenName,
-      from,
-      txnHash: transaction_hash,
-      pagingToken: paging_token,
-      date: created_at
-    }
-
     console.log('Deposit received')
     console.log(deposit)
     console.log()
 
+    const { memo } = await message.transaction()
     const account = await Account.getOrCreate({ id: memo }, TOKENS)
-    const creditedAccount = account.credit(tokenName, amount)
 
     try {
-      await Promise.all([
-        creditedAccount.save(),
-        depositsCollection.insertOne(deposit)
-      ])
-      console.log(`Credited ${amount} ${tokenName} to ${creditedAccount.username}`)
+      const [creditedAccount, depositData] = await deposit(account, {
+        amount,
+        asset_code,
+        from,
+        transaction_hash,
+        paging_token,
+        created_at
+      })
+      console.log(`Credited ${amount} ${depositData.tokenName} to ${creditedAccount.username}`)
       console.log(JSON.stringify((({_id, username, balances}) => ({_id, username, balances}))(creditedAccount), null, 2))
       console.log()
     } catch (e) {
