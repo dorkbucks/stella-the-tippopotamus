@@ -30,6 +30,8 @@ Send tokens to one or more server members.
 _This command is only available in text channels._
 
 **\`.tip <recipients> <amount> <token> [each]\`**
+_or reply to the recipient with:_
+**\`.tip <amount> <token>\`**
 
 _<recipients>_
 1 or more @members, "active", or @everyone (the "@" is optional).
@@ -118,6 +120,8 @@ help.index = `
 
 **.tip** _(Text channel only)_
 \`.tip <recipients> <amount> <token> [each]\`
+_or reply to the recipient with:_
+\`.tip <amount> <token>\`
 
 **.whos** _(Text channel only)_
 \`.whos <classifier>\`
