@@ -53,12 +53,12 @@ export function depositHandler (address, depositsCollection, Account) {
 
     const { memo } = await message.transaction()
     const account = await Account.getOrCreate({ id: memo }, TOKENS)
-    const token = tokens.get(asset_code, 'name')
     const creditedAccount = account.credit(token, amount)
+    const tokenName = tokens.get(asset_code, 'name')
     const deposit = {
       accountID: memo,
       amount,
-      token,
+      tokenName,
       from,
       txnHash: transaction_hash,
       pagingToken: paging_token,
