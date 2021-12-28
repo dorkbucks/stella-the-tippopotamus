@@ -48,6 +48,9 @@ export function depositHandler (address, depositsCollection, Account) {
       return
     }
 
+    const processedDeposit = await depositsCollection.findOne({ txnHash: transaction_hash })
+    if (processedDeposit) return
+
     const { memo } = await message.transaction()
     const account = await Account.getOrCreate({ id: memo }, TOKENS)
     const token = tokens.get(asset_code, 'name')
