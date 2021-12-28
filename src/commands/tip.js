@@ -120,7 +120,7 @@ export class Tip {
     const { emoji } = tokens.get(token, 'logo')
     const minimumTip = BigNumber(tokens.get(token, 'minimumTip'))
 
-    if (recipientIDs.includes(sender.id)) {
+    if (recipientIDs.includes(sender._id)) {
       return { message: { body: `You can't tip yourself` } }
     }
 
