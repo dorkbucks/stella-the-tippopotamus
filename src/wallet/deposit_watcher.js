@@ -65,11 +65,15 @@ export function depositHandler (address, depositsCollection, Account) {
       date: created_at
     }
 
-    await Promise.all([
-      creditedAccount.save(),
-      depositsCollection.insertOne(deposit)
-    ])
 
-    console.log(`Credited ${amount} ${token} to user account ${memo}`)
+    try {
+      await Promise.all([
+        creditedAccount.save(),
+        depositsCollection.insertOne(deposit)
+      ])
+      console.log(`Credited ${amount} ${tokenName} to user account ${memo}`)
+    } catch (e) {
+      console.log(e)
+    }
   }
 }
