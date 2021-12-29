@@ -13,7 +13,7 @@ export class Whos {
     classifier = classifier.toLowerCase()
 
     if (!Whos.classifiers.includes(classifier)) {
-      return { message: { body: `Try\n\`.whos ${Whos.classifiers.join('|')}\``} }
+      return { messages: [{ body: `Try\n\`.whos ${Whos.classifiers.join('|')}\``}] }
     }
 
     const accountsCollection = await getCollection('accounts')
@@ -24,10 +24,10 @@ export class Whos {
     const body = activeUsers.length ? activeUsersList : `No ${classifier} users found`
 
     return {
-      message: {
+      messages: [{
         heading,
         body
-      }
+      }]
     }
   }
 }

@@ -8,7 +8,7 @@ export class Balance {
 
   call ({ username, avatar, balances }) {
     return {
-      message: {
+      messages: [{
         heading: `${username}'s balances`,
         icon: avatar,
         body: Object.keys(balances).sort((a, b) => a.localeCompare(b)).reduce((str, name) => {
@@ -16,7 +16,7 @@ export class Balance {
           const bal = balances[name].toFormat()
           return `${str}\n${emoji} **${name}**: ${bal}`
         }, '')
-      }
+      }]
     }
   }
 }

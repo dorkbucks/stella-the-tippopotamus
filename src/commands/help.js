@@ -144,10 +144,10 @@ export class Help {
     const heading = ''
     const body = help[topic] || help.huh
     return {
-      message: {
+      messages: [{
         heading,
         body
-      }
+      }]
     }
   }
 }

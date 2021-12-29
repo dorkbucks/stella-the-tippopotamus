@@ -68,29 +68,31 @@ bot.on('messageCreate', async (msg) => {
     { recipient, server, channel }
   )
 
-  const {
-    heading='',
-    icon='',
-    body,
-    image,
-    footer=''
-  } = result.message
-
-  let files = []
-  let imageName = ''
-  if (image) {
-    files.push(new MessageAttachment(image.attachment, image.name))
-    imageName = `attachment://${image.name}`
-  }
-
-  const embed = new MessageEmbed()
-        .setColor('#ff9900')
-        .setAuthor(heading, icon)
-        .setDescription(body)
-        .setImage(imageName)
-        .setFooter(footer)
-
   const send = channelType === 'DM' ? author.send.bind(author) : msg.reply.bind(msg)
-  send({ embeds: [embed], files })
+
+  for (let msg of result.messages) {
+    if (msg.type === 'text') {
+      await send(msg.body)
+    } else {
+      const {
+        heading='',
+        icon='',
+        body,
+        image,
+        footer=''
+      } = msg
+
+      const files = image ? [new MessageAttachment(image.attachment, image.name)] : []
+      const imageName = image ? `attachment://${image.name}` : ''
+      const embed = new MessageEmbed()
+            .setColor('#ff9900')
+            .setAuthor(heading, icon)
+            .setDescription(body)
+            .setImage(imageName)
+            .setFooter(footer)
+
+      await send({ embeds: [embed], files })
+    }
+  }
 })
 bot.login(DISCORD_TOKEN)

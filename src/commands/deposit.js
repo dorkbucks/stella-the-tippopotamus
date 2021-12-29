@@ -19,11 +19,11 @@ export class DepositRequest {
     const qrCodeBuffer = new Buffer.from(qrCodeDataURI.split(',')[1], 'base64')
 
     return {
-      message: {
+      messages: [{
         heading: 'You may deposit any of these supported tokens:',
         body: `${tokenList}\n\nScan the qr code with your wallet or send to:\n **${walletAddress}**\n with memo: \n **${memo}**`,
         image: { name: 'qrcode.png', attachment: qrCodeBuffer }
-      }
+      }]
     }
   }
 }

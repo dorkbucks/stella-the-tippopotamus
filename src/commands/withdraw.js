@@ -96,7 +96,7 @@ export class WithdrawalRequest {
 
   async call (sender, args) {
     if (!args.length) {
-      return { message: { body: '.withdraw <amount|all> <token> <address> [memo]' } }
+      return { messages: [{ body: '.withdraw <amount|all> <token> <address> [memo]' }] }
     }
 
     args = this.parseArgs(args)
@@ -109,22 +109,22 @@ export class WithdrawalRequest {
     try {
       await this.validate(validateAccount, sender, args)
     } catch (e) {
-      return { message: { body: e.message } }
+      return { messages: [{ body: e.message }] }
     }
 
     try {
       const result = await withdraw(sender, args)
       const tokenName = tokens.get(args.token, 'name')
       const txLink = expertTxnURL(result.hash)
-      return { message: {
+      return { messages: [{
         heading: `${tokenName} withdrawal successful`,
         body: `[View the transaction on Stellar Expert](${txLink})`
-      }}
+      }]}
     } catch (e) {
-      return { message: {
+      return { messages: [{
         heading: 'Something went wrong.',
         body: `Error message: **${e.message}**`
-      }}
+      }]}
     }
   }
 }

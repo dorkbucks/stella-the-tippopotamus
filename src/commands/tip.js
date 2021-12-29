@@ -88,7 +88,7 @@ export class Tip {
     args = this.parseArgs(args, recipient)
 
     if (args === null) {
-      return { message: { body: `I don't understand what you mean` } }
+      return { messages: [{ body: `I don't understand what you mean` }] }
     }
 
     const { recipientIDs = [], classifier = '', amount, modifier } = args
@@ -99,7 +99,7 @@ export class Tip {
       const activeAccounts = await getActiveUsers(accountsCollection, server.id, channel.id, 30, 30)
       recipients = activeAccounts.filter(({ _id }) => _id !== sender._id)
       if (!recipients.length) {
-        return { message: { body: 'Found no other active users in this channel' } }
+        return { messages: [{ body: 'Found no other active users in this channel' }] }
       }
     }
 
@@ -107,34 +107,34 @@ export class Tip {
       const members = await server.members.list({ limit: 1000 })
       recipients = members.map(m => m.user).filter(u => !u.bot && u.id !== sender._id)
       if (!recipients.length) {
-        return { message: { body: 'No users found' } }
+        return { messages: [{ body: 'No users found' }] }
       }
     }
 
     const token = tokens.get(args.token, 'name')
 
     if (!token) {
-      return { message: { body: `That token isn't supported` } }
+      return { messages: [{ body: `That token isn't supported` }] }
     }
 
     const { emoji } = tokens.get(token, 'logo')
     const minimumTip = BigNumber(tokens.get(token, 'minimumTip'))
 
     if (recipientIDs.includes(sender._id)) {
-      return { message: { body: `You can't tip yourself` } }
+      return { messages: [{ body: `You can't tip yourself` }] }
     }
 
     if (!amount) {
-      return { message: { body: `I don't know what amount you mean` } }
+      return { messages: [{ body: `I don't know what amount you mean` }] }
     }
 
     const isAll = amount === 'all'
     const isEach = modifier === 'each' && recipients.length > 1
     if (isAll && isEach) {
       return {
-        message: {
+        messages: [{
           body: `You can't tip **all** of your ${emoji} ${token} to **each** person`
-        }
+        }]
       }
     }
 
@@ -149,15 +149,15 @@ export class Tip {
     })
 
     if (totalAmount.lte(0)) {
-      return { message: { body: `You can't tip **≤ 0**`} }
+      return { messages: [{ body: `You can't tip **≤ 0**`}] }
     }
 
     if (!senderAccount.balanceSufficient(token, totalAmount)) {
-      return { message: { body: `You can't afford this tip` } }
+      return { messages: [{ body: `You can't afford this tip` }] }
     }
 
     if (amountPer.lt(minimumTip)) {
-      return { message: { body: `${emoji} The minimum **${token}** tip is **${minimumTip}** per person`} }
+      return { messages: [{ body: `${emoji} The minimum **${token}** tip is **${minimumTip}** per person`}] }
     }
 
     let updatedSenderAccount = senderAccount.debit(token, totalAmount)
@@ -176,9 +176,9 @@ export class Tip {
     const tos = lf.format(recipientAccounts.map(({ _id }) => `<@${_id}>`))
 
     return {
-      message: {
+      messages: [{
         body: `<@${sender._id}> sent ${tos} ${emoji} ${amountSent}`
-      }
+      }]
     }
   }
 }
