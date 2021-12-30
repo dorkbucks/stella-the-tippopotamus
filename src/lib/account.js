@@ -22,6 +22,8 @@ export class Account {
   constructor (objOrID, tokens=[]) {
     if (typeof objOrID === 'string') {
       this._id = objOrID
+    } else if (objOrID instanceof Account) {
+      return objOrID
     } else {
       Object.assign(this, objOrID)
       this._id = this._id || this.id

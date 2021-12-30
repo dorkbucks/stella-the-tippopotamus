@@ -34,6 +34,15 @@ test('Constructor works with object', (t) => {
   t.end()
 })
 
+test('Constructor is idempotent', (t) => {
+  const id = '1234'
+  const acctOrig = new Account(id, TOKENS)
+  const acctNew = new Account(acctOrig, TOKENS)
+  t.equal(acctOrig, acctNew)
+  t.end()
+})
+
+
 test('balances', (t) => {
 
   t.test('"New" account', (_t) => {
