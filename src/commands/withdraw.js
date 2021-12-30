@@ -55,8 +55,7 @@ export class WithdrawalRequest {
   }
 
   async validate (accountValidator, sender, { amount, token, address, memo }) {
-    const tokenName = tokens.get(token, 'name')
-    const tokenCode = tokens.get(token, 'code')
+    const [ tokenName, tokenCode, issuer ] = tokens.get(token, 'name', 'code', 'issuer')
     amount = BigNumber(amount)
 
     if (amount.lte(0)) {
@@ -71,7 +70,6 @@ export class WithdrawalRequest {
       throw new Error('You cannot afford this withdrawal')
     }
 
-    const issuer = tokens.get(token, 'issuer')
     const asset = new Asset(tokenCode, issuer)
 
     const { isValid, reason } = await accountValidator(server, asset, address, false)
@@ -102,8 +100,8 @@ export class WithdrawalRequest {
     args = this.parseArgs(args)
 
     if (args?.amount === 'all' && tokens.isSupported(args.token)) {
-      const token = tokens.get(args.token, 'name')
-      args.amount = sender.balances[token]
+      const [ tokenName ] = tokens.get(args.token, 'name')
+      args.amount = sender.balances[tokenName]
     }
 
     try {
@@ -114,7 +112,7 @@ export class WithdrawalRequest {
 
     try {
       const result = await withdraw(sender, args)
-      const tokenName = tokens.get(args.token, 'name')
+      const [ tokenName ] = tokens.get(args.token, 'name')
       const txLink = expertTxnURL(result.hash)
       return { messages: [{
         heading: `${tokenName} withdrawal successful`,

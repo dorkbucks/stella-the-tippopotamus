@@ -62,7 +62,7 @@ export function depositHandler (address, depositsCollection, Account) {
 
     const { memo } = await message.transaction()
     const account = await Account.getOrCreate({ id: memo }, TOKENS)
-    const tokenName = tokens.get(asset_code, 'name')
+    const [ tokenName ] = tokens.get(asset_code, 'name')
 
     logger.info('Transaction is a valid deposit. Crediting account')
 

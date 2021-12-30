@@ -7,9 +7,7 @@ import { getCollection } from '../db/index.js'
 
 
 export async function withdraw (account, { amount, token, address, memo }) {
-  const tokenName = tokens.get(token, 'name')
-  const tokenCode = tokens.get(token, 'code')
-  const issuer = tokens.get(token, 'issuer')
+  const [ tokenName, tokenCode, issuer ] = tokens.get(token, 'name', 'code', 'issuer')
   const asset = new Asset(tokenCode, issuer)
 
   let _memo

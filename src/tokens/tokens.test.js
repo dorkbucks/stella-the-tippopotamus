@@ -1,6 +1,8 @@
 import { test } from 'tap'
 
 import { tokens } from './index.js'
+import { DorkBucks } from './dorkbucks.js'
+import { Ananos } from './ananos.js'
 
 
 test('.list()', (t) => {
@@ -24,12 +26,25 @@ test('.list()', (t) => {
 })
 
 test('.get', (t) => {
-  t.equal(tokens.get('dork', 'name'), 'DorkBucks', 'Get by alias')
-  t.equal(tokens.get('ana', 'name'), 'Ananos', 'Get by alias')
+  t.equal(tokens.get('dork', 'name')[0], DorkBucks.name, 'Get by alias')
+  t.equal(tokens.get('ana', 'name')[0], Ananos.name, 'Get by alias')
 
-  t.equal(tokens.get('none', 'name'), undefined, 'Return undefined if non-existent token')
-  t.equal(tokens.get('dork'), undefined, 'Return undefined if no prop passed')
-  t.equal(tokens.get('dork', 'none'), undefined, 'Return undefined if non-existent prop')
+  t.equal(tokens.get('none', 'name').length, 0, 'Return empty array if non-existent token')
+  t.equal(tokens.get('dork').length, 0, 'Return empty array if no prop passed')
+  t.equal(tokens.get('dork', 'none')[0], undefined, 'Return undefined if non-existent prop')
+
+  t.test('.get multiple props', (_t) => {
+    var props = tokens.get('dork', 'name', 'logo', 'issuer')
+    t.equal(DorkBucks.name, props[0])
+    t.equal(DorkBucks.logo, props[1])
+    t.equal(DorkBucks.issuer, props[2])
+
+    var props = tokens.get('dork', 'name', 'none', 'issuer')
+    t.equal(DorkBucks.name, props[0])
+    t.equal(undefined, props[1])
+    t.equal(DorkBucks.issuer, props[2])
+    _t.end()
+  })
   t.end()
 })
 

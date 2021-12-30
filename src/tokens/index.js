@@ -11,14 +11,16 @@ const TOKENS = [
 
 const lc = t => t.toLowerCase()
 
-function get (str, prop) {
-  if (!prop) return
+function get (str, ...props) {
+  if (!props.length) return []
   str = lc(str)
   const token = TOKENS.filter(({ aliases }) => aliases.map(lc).includes(str))[0]
-  if (!token) return
-  if (prop in token) {
-    return token[prop]
-  }
+  if (!token) return []
+  return props.map((prop) => {
+    if (prop in token) {
+      return token[prop]
+    }
+  })
 }
 
 function list (...props) {
@@ -30,7 +32,7 @@ function list (...props) {
 }
 
 function isSupported (str='') {
-  return !!get(str, 'name')
+  return !!get(str, 'name').length
 }
 
 export const tokens = {

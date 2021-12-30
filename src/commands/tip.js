@@ -111,14 +111,14 @@ export class Tip {
       }
     }
 
-    const token = tokens.get(args.token, 'name')
+    const [ tokenName, _minimumTip, logo ] = tokens.get(args.token, 'name', 'minimumTip',  'logo')
 
-    if (!token) {
+    if (!tokenName) {
       return { messages: [{ body: `That token isn't supported` }] }
     }
 
-    const { emoji } = tokens.get(token, 'logo')
-    const minimumTip = BigNumber(tokens.get(token, 'minimumTip'))
+    const { emoji } = logo
+    const minimumTip = BigNumber(_minimumTip)
 
     if (recipientIDs.includes(sender._id)) {
       return { messages: [{ body: `You can't tip yourself` }] }
@@ -133,7 +133,7 @@ export class Tip {
     if (isAll && isEach) {
       return {
         messages: [{
-          body: `You can't tip **all** of your ${emoji} ${token} to **each** person`
+          body: `You can't tip **all** of your ${emoji} ${tokenName} to **each** person`
         }]
       }
     }
@@ -145,31 +145,31 @@ export class Tip {
     )
 
     const [totalAmount, amountPer] = this.calcAmounts({
-      sender, recipients, token, amount, isAll, isEach
+      sender, recipients, tokenName, amount, isAll, isEach
     })
 
     if (totalAmount.lte(0)) {
       return { messages: [{ body: `You can't tip **≤ 0**`}] }
     }
 
-    if (!senderAccount.balanceSufficient(token, totalAmount)) {
+    if (!senderAccount.balanceSufficient(tokenName, totalAmount)) {
       return { messages: [{ body: `You can't afford this tip` }] }
     }
 
     if (amountPer.lt(minimumTip)) {
-      return { messages: [{ body: `${emoji} The minimum **${token}** tip is **${minimumTip}** per person`}] }
+      return { messages: [{ body: `${emoji} The minimum **${tokenName}** tip is **${minimumTip}** per person`}] }
     }
 
-    let updatedSenderAccount = senderAccount.debit(token, totalAmount)
-    let updatedRecipientAccounts = recipientAccounts.map(account => account.credit(token, amountPer))
+    let updatedSenderAccount = senderAccount.debit(tokenName, totalAmount)
+    let updatedRecipientAccounts = recipientAccounts.map(account => account.credit(tokenName, amountPer))
 
     ;[updatedSenderAccount, ...updatedRecipientAccounts] = await Promise.all(
       [updatedSenderAccount, ...updatedRecipientAccounts].map(account => account.save())
     )
 
-    let amountSent = `**${totalAmount.toFormat()} ${token}**`
+    let amountSent = `**${totalAmount.toFormat()} ${tokenName}**`
     if (isEach || amountPer.lt(totalAmount)) {
-      amountSent = `**${amountPer.toFormat()} ${token} each**`
+      amountSent = `**${amountPer.toFormat()} ${tokenName} each**`
     }
 
     // TODO: Update this to `discord_id` (?) when we switch to snowflake ids
