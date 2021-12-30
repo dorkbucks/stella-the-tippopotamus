@@ -56,6 +56,8 @@ help.deposit = `
 **Deposit**
 _This command is only available in DMs._
 Get instructions for depositing tokens to your tipbot account.
+
+**\`.deposit\`**
 `
 
 help.withdraw = `
