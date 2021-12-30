@@ -1,6 +1,7 @@
 import { getCollection } from '../db/index.js'
 import { Account } from '../lib/account.js'
 import { tokens } from '../tokens/index.js'
+import { logger } from '../lib/logger.js'
 
 
 const TOKENS = tokens.list()
@@ -47,7 +48,7 @@ function messageCreateHandler (collection) {
     }
 
     if (!account) {
-      console.warn(`Could not getOrCreate Account to save user's activity.`)
+      logger.warn(`Could not getOrCreate Account to save user's activity.`)
       return
     }
 

@@ -6,6 +6,7 @@ import { tokens } from '../tokens/index.js'
 import { walletAddress } from './config.js'
 import { getCollection } from '../db/index.js'
 import { deposit } from '../wallet/index.js'
+import { logger } from '../lib/logger.js'
 
 
 const TOKENS = tokens.list('name')
@@ -16,10 +17,10 @@ export async function startDepositWatcher () {
   const pagingToken = lastDeposit?.pagingToken || 'now'
   const handlers = {
     onmessage: depositHandler(walletAddress, depositsCollection, Account),
-    onerror: (error) => console.log(error)
+    onerror: (error) => logger.error(error, 'DepositWatcher EventStream encountered an error')
   }
 
-  console.log(`Starting transaction stream at cursor: ${pagingToken}`)
+  logger.info(`Starting DepositWatcher transaction stream at cursor: ${pagingToken}`)
 
   return server.payments()
                .forAccount(walletAddress)
@@ -42,20 +43,26 @@ export function depositHandler (address, depositsCollection, Account) {
       paging_token
     } = message
 
+    logger.info(
+      { type, to, from, amount, asset_type, asset_code, transaction_hash },
+      'DepositWatcher received a transaction'
+    )
+
     if (type !== 'payment' || to !== address || asset_type === 'native' || !transaction_successful) {
-      console.log(`Not a transaction we're interested in. Bailing`)
+      logger.info(`Not a transaction we're interested in. Bailing`)
       return
     }
 
     const processedDeposit = await depositsCollection.findOne({ txnHash: transaction_hash })
-    if (processedDeposit) return
-
-    console.log('Deposit received')
-    console.log(deposit)
-    console.log()
+    if (processedDeposit) {
+      logger.warn(processedDeposit, 'Deposit has already been processed')
+      return
+    }
 
     const { memo } = await message.transaction()
     const account = await Account.getOrCreate({ id: memo }, TOKENS)
+
+    logger.info('Transaction is a valid deposit. Crediting account')
 
     try {
       const [creditedAccount, depositData] = await deposit(account, {
@@ -66,11 +73,12 @@ export function depositHandler (address, depositsCollection, Account) {
         paging_token,
         created_at
       })
-      console.log(`Credited ${amount} ${depositData.tokenName} to ${creditedAccount.username}`)
-      console.log(JSON.stringify((({_id, username, balances}) => ({_id, username, balances}))(creditedAccount), null, 2))
-      console.log()
+      logger.info(
+        (({_id, username, balances}) => ({_id, username, balances}))(creditedAccount),
+        `Credited ${amount} ${depositData.tokenName} to ${creditedAccount.username}`
+      )
     } catch (e) {
-      console.log(e)
+      logger.fatal(e, 'DepositWatcher failed to credit deposit to user')
     }
   }
 }
