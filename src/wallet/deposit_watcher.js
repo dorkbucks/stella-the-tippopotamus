@@ -79,6 +79,7 @@ export function depositHandler (address, depositsCollection, Account) {
       )
     } catch (e) {
       logger.fatal(e, 'DepositWatcher failed to credit deposit to user')
+      throw e
     }
   }
 }
