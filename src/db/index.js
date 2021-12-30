@@ -14,6 +14,7 @@ const {
 const url = `mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_PORT}/${MONGODB_DATABASE}?authSource=admin`
 const client = new MongoClient(url)
 let _client
+const collections = new Map()
 
 export async function connect () {
   _client = _client || await client.connect()
@@ -21,6 +22,13 @@ export async function connect () {
 }
 
 export async function getCollection (name) {
-  await connect()
-  return _client.db().collection(name)
+  let collection
+  if (collections.has(name)) {
+    collection = collections.get(name)
+  } else {
+    await connect()
+    collection = await _client.db().collection(name)
+    collections.set(name, collection)
+  }
+  return collection
 }
