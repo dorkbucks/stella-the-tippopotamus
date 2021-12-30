@@ -1,19 +1,11 @@
-import { tokens } from '../tokens/index.js'
-import { getCollection } from '../db/index.js'
-
-
-export async function deposit (account, data) {
+export async function deposit (account, depositsCollection, tokenName, txnData) {
   const {
     amount,
-    asset_code,
     from,
     transaction_hash,
     paging_token,
     created_at
-  } = data
-
-  const depositsCollection = await getCollection('deposits')
-  const tokenName = tokens.get(asset_code, 'name')
+  } = txnData
 
   const creditedAccount = account.credit(tokenName, amount)
   const deposit = {
