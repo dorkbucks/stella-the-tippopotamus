@@ -6,10 +6,11 @@ import { tokens } from '../tokens/index.js'
 import { walletAddress } from './config.js'
 import { getCollection } from '../db/index.js'
 import { deposit } from '../wallet/index.js'
-import { logger } from '../lib/logger.js'
+import { logger as _logger } from '../lib/logger.js'
 
 
 const TOKENS = tokens.list('name')
+const logger = _logger.child({ module: 'DepositWatcher' })
 
 export async function startDepositWatcher () {
   const depositsCollection = await getCollection('deposits')
@@ -17,10 +18,10 @@ export async function startDepositWatcher () {
   const pagingToken = lastDeposit?.pagingToken || 'now'
   const handlers = {
     onmessage: depositHandler(walletAddress, depositsCollection, Account),
-    onerror: (error) => logger.error(error, 'DepositWatcher EventStream encountered an error')
+    onerror: (error) => logger.error(error, 'EventStream encountered an error')
   }
 
-  logger.info(`Starting DepositWatcher transaction stream at cursor: ${pagingToken}`)
+  logger.info(`Starting transaction stream at cursor: ${pagingToken}`)
 
   return server.payments()
                .forAccount(walletAddress)
@@ -45,7 +46,7 @@ export function depositHandler (address, depositsCollection, Account) {
 
     logger.info(
       { type, to, from, amount, asset_type, asset_code, transaction_hash },
-      'DepositWatcher received a transaction'
+      'Received a transaction'
     )
 
     if (type !== 'payment' || to !== address || asset_type === 'native' || !transaction_successful) {
@@ -78,7 +79,7 @@ export function depositHandler (address, depositsCollection, Account) {
         `Credited ${amount} ${depositData.tokenName} to ${creditedAccount.username}`
       )
     } catch (e) {
-      logger.fatal(e, 'DepositWatcher failed to credit deposit to user')
+      logger.fatal(e, 'Failed to credit deposit to user')
       throw e
     }
   }
