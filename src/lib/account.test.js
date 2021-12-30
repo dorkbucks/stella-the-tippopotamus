@@ -42,6 +42,14 @@ test('Constructor is idempotent', (t) => {
   t.end()
 })
 
+test('Constructor tokens arg is optional', (t) => {
+  const id = '1234'
+  const acct = new Account(id)
+  TOKENS.forEach(({ name }) => {
+    t.ok(acct.balances[name])
+  })
+  t.end()
+})
 
 test('balances', (t) => {
 

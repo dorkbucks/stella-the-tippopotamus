@@ -1,10 +1,13 @@
 import { BigNumber } from './proxied_bignumber.js'
 import { bot } from './bot.js'
 import { getCollection } from '../db/index.js'
+import { tokens } from '../tokens/index.js'
 
+
+const TOKENS = tokens.list('name')
 
 export class Account {
-  static async getOrCreate (acctData, tokens) {
+  static async getOrCreate (acctData, tokens=TOKENS) {
     const accountsCollection = await getCollection('accounts')
     let account = await accountsCollection.findOne({ _id: acctData.id })
     if (account) {
@@ -19,7 +22,7 @@ export class Account {
     }
   }
 
-  constructor (objOrID, tokens=[]) {
+  constructor (objOrID, tokens=TOKENS) {
     if (typeof objOrID === 'string') {
       this._id = objOrID
     } else if (objOrID instanceof Account) {

@@ -1,10 +1,7 @@
 import { getCollection } from '../db/index.js'
 import { Account } from '../lib/account.js'
-import { tokens } from '../tokens/index.js'
 import { logger } from '../lib/logger.js'
 
-
-const TOKENS = tokens.list()
 
 function isAcceptableMessage (text) {
   text = text.toLowerCase()
@@ -40,10 +37,10 @@ function messageCreateHandler (collection) {
     // fails, just log and bail.
     let account
     try {
-      account = await Account.getOrCreate({ id: author.id }, TOKENS)
+      account = await Account.getOrCreate({ id: author.id })
     } catch (e) {
       try {
-        account = await Account.getOrCreate({ id: author.id }, TOKENS)
+        account = await Account.getOrCreate({ id: author.id })
       } catch {}
     }
 

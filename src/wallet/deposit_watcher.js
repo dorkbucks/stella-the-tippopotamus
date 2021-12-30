@@ -9,7 +9,6 @@ import { deposit } from '../wallet/index.js'
 import { logger as _logger } from '../lib/logger.js'
 
 
-const TOKENS = tokens.list('name')
 const logger = _logger.child({ module: 'DepositWatcher' })
 
 export async function startDepositWatcher () {
@@ -61,7 +60,7 @@ export function depositHandler (address, depositsCollection, Account) {
     }
 
     const { memo } = await message.transaction()
-    const account = await Account.getOrCreate({ id: memo }, TOKENS)
+    const account = await Account.getOrCreate({ id: memo })
     const [ tokenName ] = tokens.get(asset_code, 'name')
 
     logger.info('Transaction is a valid deposit. Crediting account')

@@ -1,8 +1,4 @@
 import { Account } from '../lib/account.js'
-import { tokens } from '../tokens/index.js'
-
-
-const TOKENS = tokens.list()
 
 
 export async function getActiveUsers (collection, serverID, channelID, lastNMinutes=30, limit=30) {
@@ -18,5 +14,5 @@ export async function getActiveUsers (collection, serverID, channelID, lastNMinu
         .limit(limit)
         .toArray()
 
-  return result.map(acct => new Account(acct, TOKENS))
+  return result.map(acct => new Account(acct))
 }

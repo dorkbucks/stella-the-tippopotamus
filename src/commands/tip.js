@@ -7,7 +7,6 @@ import { getCollection } from '../db/index.js'
 import { getActiveUsers } from '../activity/index.js'
 
 
-const TOKENS = tokens.list()
 const lf = new Intl.ListFormat('en')
 
 const userRE = /^<@!?(?<id>\d{17,19})>$/
@@ -140,7 +139,7 @@ export class Tip {
 
     const [senderAccount, ...recipientAccounts] = await Promise.all(
       [sender, ...recipients].map(obj => (
-        (obj instanceof Account) ? obj : Account.getOrCreate(obj, TOKENS)
+        (obj instanceof Account) ? obj : Account.getOrCreate(obj)
       ))
     )
 
