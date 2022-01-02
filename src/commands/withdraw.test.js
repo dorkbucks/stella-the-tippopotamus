@@ -49,6 +49,9 @@ test('parseArgs', (t) => {
   t.equal(parsedArgs.token, 'dork')
   t.equal(parsedArgs.address, address)
   t.equal(parsedArgs.memo, '100230')
+
+  var parsedArgs = withdrawal.parseArgs([])
+  t.equal(parsedArgs, null)
   t.end()
 })
 
