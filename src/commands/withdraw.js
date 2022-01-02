@@ -52,7 +52,12 @@ export class WithdrawalRequest {
     return argsObj
   }
 
-  async validate (accountValidator, sender, { amount, token, address, memo }) {
+  async validate (accountValidator, sender, args) {
+    if (!args) {
+      throw new Error('.withdraw <amount|all> <token> <address> [memo]' )
+    }
+
+    let { amount, token, address, memo } = args
     const [ tokenName, tokenCode, issuer ] = tokens.get(token, 'name', 'code', 'issuer')
     amount = BigNumber(amount)
 
@@ -91,10 +96,6 @@ export class WithdrawalRequest {
   }
 
   async call (sender, args) {
-    if (!args.length) {
-      return { messages: [{ body: '.withdraw <amount|all> <token> <address> [memo]' }] }
-    }
-
     args = this.parseArgs(args)
 
     if (args?.amount === 'all' && tokens.isSupported(args.token)) {

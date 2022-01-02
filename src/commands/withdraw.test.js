@@ -85,6 +85,17 @@ test('validate', async (t) => {
       _t.end()
     }),
 
+    t.test('No args', async (_t) => {
+      try {
+        const parsedArgs = withdrawal.parseArgs([])
+        const x = await withdrawal.validate(mockValidateAccountTrue, sender, parsedArgs)
+        t.fail('Should throw if args is empty')
+      } catch(e) {
+        t.ok(e)
+      }
+      _t.end()
+    }),
+
     t.test('Invalid amounts', async (_t) => {
       try {
         const parsedArgs = withdrawal.parseArgs(['100b', 'dork', address])
