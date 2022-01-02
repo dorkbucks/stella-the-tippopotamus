@@ -68,14 +68,14 @@ export class Tip {
     return argsObj
   }
 
-  calcAmounts ({ sender, recipients, token, amount, isAll, isEach }) {
+  calcAmounts ({ sender, recipients, tokenName, amount, isAll, isEach }) {
     amount = typeof amount === 'number' ? BigNumber(amount) : amount
     let totalAmount, amountPer
     if (isEach) {
       totalAmount = amount.times(recipients.length)
       amountPer = amount
     } else {
-      totalAmount = isAll ? BigNumber(sender.balances[token]) : amount
+      totalAmount = isAll ? BigNumber(sender.balances[tokenName]) : amount
       amountPer = totalAmount.div(recipients.length)
     }
     return [totalAmount, amountPer]
