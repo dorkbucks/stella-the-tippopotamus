@@ -59,9 +59,10 @@ export class WithdrawalRequest {
 
     let { amount, token, address, memo } = args
     const [ tokenName, tokenCode, issuer ] = tokens.get(token, 'name', 'code', 'issuer')
-    amount = BigNumber(amount)
+    const isAll = amount === 'all'
+    amount = isAll ? amount : BigNumber(amount)
 
-    if (amount.lte(0)) {
+    if (!isAll && amount.lte(0)) {
       throw new Error('Amount should be a positive number')
     }
 
@@ -69,7 +70,7 @@ export class WithdrawalRequest {
       throw new Error(`${token} is not a supported token`)
     }
 
-    if (!sender.balanceSufficient(tokenName, amount)) {
+    if (!isAll && !sender.balanceSufficient(tokenName, amount)) {
       throw new Error('You cannot afford this withdrawal')
     }
 
@@ -98,20 +99,20 @@ export class WithdrawalRequest {
   async call (sender, args) {
     args = this.parseArgs(args)
 
-    if (args?.amount === 'all' && tokens.isSupported(args.token)) {
-      const [ tokenName ] = tokens.get(args.token, 'name')
-      args.amount = sender.balances[tokenName]
-    }
-
     try {
       await this.validate(validateAccount, sender, args)
     } catch (e) {
       return { messages: [{ body: e.message }] }
     }
 
+    const [ tokenName ] = tokens.get(args.token, 'name')
+
+    if (args.amount === 'all') {
+      args.amount = sender.balances[tokenName]
+    }
+
     try {
       const result = await withdraw(sender, args)
-      const [ tokenName ] = tokens.get(args.token, 'name')
       const txLink = expertTxnURL(result.hash)
       return { messages: [{
         heading: `${tokenName} withdrawal successful`,

@@ -63,6 +63,13 @@ test('validate', async (t) => {
   const address = `GC6SOPXA7X7LDKJK3SDHL6MQEQLOHF23G5CN2MLT4MJ2UPFUSKRKIURG`
 
   await Promise.all([
+    t.test('"all" as amount', async (_t) => {
+      const parsedArgs = withdrawal.parseArgs(['all', 'dork', address])
+      const result = await withdrawal.validate(mockValidateAccountTrue, sender, parsedArgs)
+      t.ok(result)
+      _t.end()
+    }),
+
     t.test('All valid; no memo', async (_t) => {
       const parsedArgs = withdrawal.parseArgs(['100', 'dork', address])
       const result = await withdrawal.validate(mockValidateAccountTrue, sender, parsedArgs)
