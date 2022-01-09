@@ -220,6 +220,15 @@ test('#parseArgs', (t) => {
       _t.end()
     })
 
+    t.test('valid command; no @', (_t) => {
+      const { args } = parseCommand('.', `.tip everyone 100 dork`)
+      const parsedArgs = tip.parseArgs(args)
+      t.equal('everyone', parsedArgs.classifier)
+      t.equal(100, parsedArgs.amount)
+      t.equal('dork', parsedArgs.token)
+      _t.end()
+    })
+
     t.test('valid command + each', (_t) => {
       const { args } = parseCommand('.', `.tip @everyone 100 dork each`)
       const parsedArgs = tip.parseArgs(args)
