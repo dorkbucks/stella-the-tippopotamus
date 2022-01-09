@@ -68,6 +68,14 @@ test('#parseArgs', (t) => {
     var parsedArgs = tip.parseArgs(args)
     t.equal(1600, parsedArgs.amount)
 
+    var { args } = parseCommand('.', `.tip <@!${id1}> 10.3m dork`)
+    var parsedArgs = tip.parseArgs(args)
+    t.equal(10300000, parsedArgs.amount)
+
+    var { args } = parseCommand('.', `.tip <@!${id1}> 10.42b dork`)
+    var parsedArgs = tip.parseArgs(args)
+    t.equal(10420000000, parsedArgs.amount)
+
     _t.end()
   })
 
@@ -79,6 +87,14 @@ test('#parseArgs', (t) => {
     var { args } = parseCommand('.', `.tip <@!${id1}> 1.12 dork`)
     var parsedArgs = tip.parseArgs(args)
     t.equal(1.12, parsedArgs.amount)
+
+    var { args } = parseCommand('.', `.tip <@!${id1}> 42.8008 dork`)
+    var parsedArgs = tip.parseArgs(args)
+    t.equal(42.8008, parsedArgs.amount)
+
+    var { args } = parseCommand('.', `.tip <@!${id1}> 798007.6666666 dork`)
+    var parsedArgs = tip.parseArgs(args)
+    t.equal(798007.6666666, parsedArgs.amount)
 
     _t.end()
   })

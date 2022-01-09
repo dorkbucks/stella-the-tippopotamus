@@ -4,7 +4,7 @@ export function expandSuffixedNum (num) {
   const multiplier = {
     k: 1000,
     m: 1000000,
-    b: 10000000
+    b: 1000000000
   }
   return parseFloat(n) * multiplier[suffix.toLowerCase()]
 }

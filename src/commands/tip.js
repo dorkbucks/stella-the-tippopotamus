@@ -12,7 +12,7 @@ const lf = new Intl.ListFormat('en')
 const userRE = /^<@!?(?<id>\d{17,19})>$/
 const roleRE = /^<@&?(?<roleid>\d{17,19})>$/
 const classifierRE = /^@?(?<classifier>active|everyone)$/i
-const amountRE = /^\d?.?\d+[k|m|b]?$|all?\b/i
+const amountRE = /^\d+.?\d*[k|m|b]?$|all?\b/i
 const tokenRE = /[a-z]+/i
 const modifierRE = /^each?/i
 
