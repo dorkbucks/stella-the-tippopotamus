@@ -51,6 +51,38 @@ test('#parseArgs', (t) => {
     _t.end()
   })
 
+  t.test('k|m|b suffixed amounts', (_t) => {
+    var { args } = parseCommand('.', `.tip <@!${id1}> 10k dork`)
+    var parsedArgs = tip.parseArgs(args)
+    t.equal(10000, parsedArgs.amount)
+
+    var { args } = parseCommand('.', `.tip <@!${id1}> 10m dork`)
+    var parsedArgs = tip.parseArgs(args)
+    t.equal(10000000, parsedArgs.amount)
+
+    var { args } = parseCommand('.', `.tip <@!${id1}> 1b dork`)
+    var parsedArgs = tip.parseArgs(args)
+    t.equal(1000000000, parsedArgs.amount)
+
+    var { args } = parseCommand('.', `.tip <@!${id1}> 1.6k dork`)
+    var parsedArgs = tip.parseArgs(args)
+    t.equal(1600, parsedArgs.amount)
+
+    _t.end()
+  })
+
+  t.test('Decimal amounts', (_t) => {
+    var { args } = parseCommand('.', `.tip <@!${id1}> 0.12345678 dork`)
+    var parsedArgs = tip.parseArgs(args)
+    t.equal(0.12345678, parsedArgs.amount)
+
+    var { args } = parseCommand('.', `.tip <@!${id1}> 1.12 dork`)
+    var parsedArgs = tip.parseArgs(args)
+    t.equal(1.12, parsedArgs.amount)
+
+    _t.end()
+  })
+
   t.test('"all" amount', (_t) => {
     const { args } = parseCommand('.', `.tip <@!${id1}> all dork`)
     const parsedArgs = tip.parseArgs(args)
