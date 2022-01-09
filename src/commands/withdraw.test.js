@@ -6,17 +6,15 @@ import { WithdrawalRequest } from './withdraw.js'
 
 
 function createFundedAccount () {
-  let account = new Account({ id: '1234' }, TOKENS)
-  TOKENS.forEach(({ name }) => {
-    account = account.credit(name, 10000)
-  })
-  return account
+  return TOKENS.reduce(
+    (acct, { name }) => acct.credit(name, 10000),
+    new Account({ id: '1234' }, TOKENS)
+  )
 }
 
 const TOKENS = tokens.list()
 
 test('parseArgs', (t) => {
-  const sender = createFundedAccount()
   const address = `GC6SOPXA7X7LDKJK3SDHL6MQEQLOHF23G5CN2MLT4MJ2UPFUSKRKIURG`
   let withdrawal = new WithdrawalRequest()
 

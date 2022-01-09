@@ -10,11 +10,10 @@ import { parseCommand } from './index.js'
 const TOKENS = tokens.list()
 
 function createFundedAccount () {
-  let account = new Account({ id: '1234' }, TOKENS)
-  TOKENS.forEach(({ name }) => {
-    account = account.credit(name, 10000)
-  })
-  return account
+  return TOKENS.reduce(
+    (acct, { name }) => acct.credit(name, 10000),
+    new Account({ id: '1234' }, TOKENS)
+  )
 }
 
 test('#parseArgs', (t) => {
