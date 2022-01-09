@@ -21,6 +21,12 @@ test('#parseArgs', (t) => {
   const id1 = '788381709112573982'
   const id2 = '564377836685754380'
 
+  t.test('No args', (_t) => {
+    const { args } = parseCommand('.', `.tip`)
+    t.same(tip.parseArgs(args), null)
+    _t.end()
+  })
+
   t.test('1 recipient', (_t) => {
     const { args } = parseCommand('.', `.tip <@!${id1}> 100 dork`)
     const parsedArgs = tip.parseArgs(args)

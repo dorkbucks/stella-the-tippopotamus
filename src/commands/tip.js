@@ -20,8 +20,9 @@ export class Tip {
   static channelTypes = ['GUILD_TEXT']
 
   parseArgs (args, recipient) {
-    let argsObj = {}
+    let argsObj = null
     for (let i = 0, len = args.length; i < len; i++) {
+      argsObj = argsObj || {}
       let curr = args[i]
       let next = args[i + 1]
 
