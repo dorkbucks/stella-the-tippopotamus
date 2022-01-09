@@ -81,8 +81,6 @@ export class Tip {
     return [totalAmount, amountPer]
   }
 
-  async getRecipientsByClassifier (classifier, { collection, server }) {}
-
   async call (sender, args, { recipient, server, channel }) {
     args = this.parseArgs(args, recipient)
 
