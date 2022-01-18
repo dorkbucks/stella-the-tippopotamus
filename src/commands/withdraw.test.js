@@ -18,33 +18,33 @@ test('parseArgs', (t) => {
   const address = `GC6SOPXA7X7LDKJK3SDHL6MQEQLOHF23G5CN2MLT4MJ2UPFUSKRKIURG`
   let withdrawal = new WithdrawalRequest()
 
-  var parsedArgs = withdrawal.parseArgs(['100', 'dork', address])
+  var parsedArgs = withdrawal.parseArgs(['100', 'hippo', address])
   t.equal(parsedArgs.amount, 100)
-  t.equal(parsedArgs.token, 'dork')
+  t.equal(parsedArgs.token, 'hippo')
   t.equal(parsedArgs.address, address)
 
-  var parsedArgs = withdrawal.parseArgs(['100k', 'dork', address])
+  var parsedArgs = withdrawal.parseArgs(['100k', 'hippo', address])
   t.equal(parsedArgs.amount, 100000)
-  t.equal(parsedArgs.token, 'dork')
+  t.equal(parsedArgs.token, 'hippo')
   t.equal(parsedArgs.address, address)
 
-  var parsedArgs = withdrawal.parseArgs(['all', 'dork', address])
+  var parsedArgs = withdrawal.parseArgs(['all', 'hippo', address])
   t.equal(parsedArgs.amount, 'all')
-  t.equal(parsedArgs.token, 'dork')
+  t.equal(parsedArgs.token, 'hippo')
   t.equal(parsedArgs.address, address)
 
-  var parsedArgs = withdrawal.parseArgs(['dork', '100', address])
+  var parsedArgs = withdrawal.parseArgs(['hippo', '100', address])
   t.equal(parsedArgs, null)
 
-  var parsedArgs = withdrawal.parseArgs(['100', 'dork', address, 'memo message'])
+  var parsedArgs = withdrawal.parseArgs(['100', 'hippo', address, 'memo message'])
   t.equal(parsedArgs.amount, 100)
-  t.equal(parsedArgs.token, 'dork')
+  t.equal(parsedArgs.token, 'hippo')
   t.equal(parsedArgs.address, address)
   t.equal(parsedArgs.memo, 'memo message')
 
-  var parsedArgs = withdrawal.parseArgs(['100', 'dork', address, '100230'])
+  var parsedArgs = withdrawal.parseArgs(['100', 'hippo', address, '100230'])
   t.equal(parsedArgs.amount, 100)
-  t.equal(parsedArgs.token, 'dork')
+  t.equal(parsedArgs.token, 'hippo')
   t.equal(parsedArgs.address, address)
   t.equal(parsedArgs.memo, '100230')
 
@@ -62,21 +62,21 @@ test('validate', async (t) => {
 
   await Promise.all([
     t.test('"all" as amount', async (_t) => {
-      const parsedArgs = withdrawal.parseArgs(['all', 'dork', address])
+      const parsedArgs = withdrawal.parseArgs(['all', 'hippo', address])
       const result = await withdrawal.validate(mockValidateAccountTrue, sender, parsedArgs)
       t.ok(result)
       _t.end()
     }),
 
     t.test('All valid; no memo', async (_t) => {
-      const parsedArgs = withdrawal.parseArgs(['100', 'dork', address])
+      const parsedArgs = withdrawal.parseArgs(['100', 'hippo', address])
       const result = await withdrawal.validate(mockValidateAccountTrue, sender, parsedArgs)
       t.ok(result)
       _t.end()
     }),
 
     t.test('All valid; with memo id', async (_t) => {
-      const parsedArgs = withdrawal.parseArgs(['100', 'dork', address, '123456'])
+      const parsedArgs = withdrawal.parseArgs(['100', 'hippo', address, '123456'])
       const result = await withdrawal.validate(mockValidateAccountTrue, sender, parsedArgs)
       t.ok(result)
       _t.end()
@@ -84,7 +84,7 @@ test('validate', async (t) => {
 
     t.test('All valid; with memo text', async (_t) => {
       const memo = Array(29).join('d')
-      const parsedArgs = withdrawal.parseArgs(['100', 'dork', address, memo])
+      const parsedArgs = withdrawal.parseArgs(['100', 'hippo', address, memo])
       const result = await withdrawal.validate(mockValidateAccountTrue, sender, parsedArgs)
       t.ok(result)
       _t.end()
@@ -103,7 +103,7 @@ test('validate', async (t) => {
 
     t.test('Invalid amounts', async (_t) => {
       try {
-        const parsedArgs = withdrawal.parseArgs(['100b', 'dork', address])
+        const parsedArgs = withdrawal.parseArgs(['100b', 'hippo', address])
         await withdrawal.validate(mockValidateAccountTrue, sender, parsedArgs)
         t.fail('Should throw if insufficient balance')
       } catch(e) {
@@ -111,7 +111,7 @@ test('validate', async (t) => {
       }
 
       try {
-        const parsedArgs = withdrawal.parseArgs(['-100', 'dork', address])
+        const parsedArgs = withdrawal.parseArgs(['-100', 'hippo', address])
         const result = await withdrawal.validate(mockValidateAccountTrue, sender, parsedArgs)
         t.fail('Should throw on negative amount')
       } catch(e) {
@@ -119,7 +119,7 @@ test('validate', async (t) => {
       }
 
       try {
-        const parsedArgs = withdrawal.parseArgs(['0', 'dork', address])
+        const parsedArgs = withdrawal.parseArgs(['0', 'hippo', address])
         const result = await withdrawal.validate(mockValidateAccountTrue, sender, parsedArgs)
         t.fail('Should throw on 0 amount')
       } catch(e) {
@@ -142,7 +142,7 @@ test('validate', async (t) => {
 
     t.test('Invalid address', async (_t) => {
       try {
-        const parsedArgs = withdrawal.parseArgs(['100', 'dork', address])
+        const parsedArgs = withdrawal.parseArgs(['100', 'hippo', address])
         await withdrawal.validate(mockValidateAccountFalse, sender, parsedArgs)
         t.fail('Should throw on invalid address')
       } catch(e) {
@@ -154,7 +154,7 @@ test('validate', async (t) => {
     t.test('Invalid memo', async (_t) => {
       try {
         const memo = Array(100).join('d')
-        const parsedArgs = withdrawal.parseArgs(['100', 'dork', address, memo])
+        const parsedArgs = withdrawal.parseArgs(['100', 'hippo', address, memo])
         await withdrawal.validate(mockValidateAccountTrue, sender, parsedArgs)
         _t.fail('Should throw on memo too long for MemoID and MemoText')
       } catch(e) {

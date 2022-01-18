@@ -301,7 +301,7 @@ test('#calcAmounts', (t) => {
     const recipients = ['1', '2']
     const amount = 'all'
     const isAll = true
-    const tokenName = 'DorkBucks'
+    const tokenName = 'Hippopotamus'
     const isEach = false
     const [totalAmount, amountPer] = tip.calcAmounts({
       sender, recipients, tokenName, amount, isAll, isEach
