@@ -1,12 +1,22 @@
+import { env } from '../lib/env.js'
 import { DorkBucks } from './dorkbucks.js'
 import { Ananos } from './ananos.js'
 import { Manangos } from './manangos.js'
+import { Beaver } from './beaver.js'
+import { Dodo } from './dodo.js'
+import { Hippopotamus } from './hippopotamus.js'
+import { Llama } from './llama.js'
 
 
-const TOKENS = [
+const TOKENS = env.NODE_ENV === 'production' ? [
   DorkBucks,
   Ananos,
   Manangos
+] : [
+  Beaver,
+  Dodo,
+  Hippopotamus,
+  Llama
 ]
 
 const lc = t => t.toLowerCase()
