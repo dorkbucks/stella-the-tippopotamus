@@ -1,54 +1,18 @@
-import { Asset, Memo, Keypair } from 'stellar-sdk'
+import { URL } from 'url'
+import { Worker } from 'worker_threads'
 
 import { Queue } from '../lib/queue.js'
-import { tokens } from '../tokens/index.js'
-import { server, txnOpts, sendPayment } from '../stellar/index.js'
-import { walletKeypair } from './config.js'
-import { getCollection } from '../db/index.js'
 
 
 const queue = new Queue()
+const workerFile = new URL('./withdraw_worker.js', import.meta.url)
 
 export function withdraw (account, { amount, token, address, memo }) {
-  return queue.add(async function doWithdraw () {
-    const [ tokenName, tokenCode, issuer ] = tokens.get(token, 'name', 'code', 'issuer')
-    const asset = new Asset(tokenCode, issuer)
-
-    let _memo
-    try {
-      _memo = Memo.id(memo)
-    } catch {
-      try {
-        _memo = Memo.text(memo)
-      } catch {}
-    }
-
-    const result = await sendPayment(
-      { server, txnOpts },
-      asset,
-      walletKeypair,
-      Keypair.fromPublicKey(address),
-      amount,
-      _memo
-    )
-
-    const debitedAccount = account.debit(tokenName, amount)
-    const withdrawal = {
-      accountID: account._id,
-      amount,
-      token,
-      to: address,
-      txnHash: result.hash,
-      date: result.created_at
-    }
-
-    const withdrawalsCollection = await getCollection('withdrawals')
-
-    await Promise.all([
-      debitedAccount.save(),
-      withdrawalsCollection.insertOne(withdrawal)
-    ])
-
-    return result
+  return new Promise((resolve, reject) => {
+    const worker = new Worker(workerFile, {
+      workerData: { account, amount, token, address, memo }
+    })
+    worker.on('message', resolve)
+    worker.on('error', reject)
   })
 }
