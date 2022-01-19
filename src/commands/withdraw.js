@@ -6,6 +6,7 @@ import { expandSuffixedNum } from '../lib/expand_suffixed_num.js'
 import { server, validateAccount, txnOpts, sendPayment, expertTxnURL } from '../stellar/index.js'
 import { withdraw } from '../wallet/index.js'
 import { walletKeypair } from '../wallet/index.js'
+import { logger } from '../lib/logger.js'
 
 
 const publicKeyRE = /^G[A-Z0-9]{55}$/
@@ -119,6 +120,7 @@ export class WithdrawalRequest {
         body: `[View the transaction on Stellar Expert](${txLink})`
       }]}
     } catch (e) {
+      logger.error(e, 'Encountered an error trying to withdraw')
       return { messages: [{
         heading: 'Something went wrong.',
         body: `Error message: **${e.message}**`
