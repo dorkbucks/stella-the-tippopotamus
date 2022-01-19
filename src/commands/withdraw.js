@@ -8,10 +8,10 @@ import { withdraw } from '../wallet/index.js'
 import { walletKeypair } from '../wallet/index.js'
 
 
-const publicKey = /^G[A-Z0-9]{55}$/
-const amount = /^\d+.?\d*[k|m|b]?$|all?\b/i
-const token = /^[a-z]+/i
-const memo = /\S+/
+const publicKeyRE = /^G[A-Z0-9]{55}$/
+const amountRE = /^\d+.?\d*[k|m|b]?$|all?\b/i
+const tokenRE = /^[a-z]+/i
+const memoRE = /\S+/
 
 
 export class WithdrawalRequest {
@@ -25,24 +25,24 @@ export class WithdrawalRequest {
       let next = args[i + 1]
       argsObj = argsObj || {}
 
-      let amt = curr.match(amount)
+      let amt = curr.match(amountRE)
 
       if (i === 0 && !amt) return null
 
       // Memos might match as amt so check if we already have an amount.
       if (amt && !argsObj.amount) {
-        const isToken = next && token.test(next)
+        const isToken = next && tokenRE.test(next)
         if (!isToken) return null
         argsObj.amount = curr === 'all' ? curr : expandSuffixedNum(curr)
         argsObj.token = next
         continue
       }
 
-      const address = curr.match(publicKey)
+      const address = curr.match(publicKeyRE)
       if (address) {
         argsObj.address = address[0]
 
-        if (next && memo.test(next)) {
+        if (next && memoRE.test(next)) {
           argsObj.memo = next
           continue
         }
