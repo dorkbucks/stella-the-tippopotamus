@@ -50,6 +50,19 @@ test('parseArgs', (t) => {
 
   var parsedArgs = withdrawal.parseArgs([])
   t.equal(parsedArgs, null)
+
+  var parsedArgs = withdrawal.parseArgs(['0.12345678', 'hippo', address])
+  t.equal(parsedArgs.amount, 0.12345678)
+
+  var parsedArgs = withdrawal.parseArgs(['1.12', 'hippo', address])
+  t.equal(parsedArgs.amount, 1.12)
+
+  var parsedArgs = withdrawal.parseArgs(['42.8008', 'hippo', address])
+  t.equal(parsedArgs.amount, 42.8008)
+
+  var parsedArgs = withdrawal.parseArgs(['798007.6666666', 'hippo', address])
+  t.equal(parsedArgs.amount, 798007.6666666)
+
   t.end()
 })
 

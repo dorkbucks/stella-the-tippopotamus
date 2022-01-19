@@ -9,7 +9,7 @@ import { walletKeypair } from '../wallet/index.js'
 
 
 const publicKey = /^G[A-Z0-9]{55}$/
-const amount = /^\d?.?\d+[k|m|b]?$|all?\b/i
+const amount = /^\d+.?\d*[k|m|b]?$|all?\b/i
 const token = /^[a-z]+/i
 const memo = /\S+/
 
