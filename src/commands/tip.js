@@ -5,16 +5,10 @@ import { tokens } from '../tokens/index.js'
 import { expandSuffixedNum } from '../lib/expand_suffixed_num.js'
 import { getCollection } from '../db/index.js'
 import { getActiveUsers } from '../activity/index.js'
+import * as REGEX from '../lib/regexes.js'
 
 
 const lf = new Intl.ListFormat('en')
-
-const userRE = /^<@!?(?<id>\d{17,19})>$/
-const roleRE = /^<@&?(?<roleid>\d{17,19})>$/
-const classifierRE = /^@?(?<classifier>active|everyone)$/i
-const amountRE = /^\d+.?\d*[k|m|b]?$|all?\b/i
-const tokenRE = /[a-z]+/i
-const modifierRE = /^each?/i
 
 export class Tip {
   static channelTypes = ['GUILD_TEXT']
@@ -26,9 +20,9 @@ export class Tip {
       let curr = args[i]
       let next = args[i + 1]
 
-      let userMatch = curr.match(userRE)
-      let classifierMatch = curr.match(classifierRE)
-      let isAmount = amountRE.test(curr)
+      let userMatch = curr.match(REGEX.DISCORD_USER)
+      let classifierMatch = curr.match(REGEX.TIP_CLASSIFIER)
+      let isAmount = REGEX.AMOUNT.test(curr)
 
       if (recipient) {
         // Recipient was passed in, amount should be first
@@ -41,8 +35,8 @@ export class Tip {
       }
 
       if (!recipient && userMatch) {
-        const nextIsUserID = userRE.test(next)
-        const nextIsAmount = amountRE.test(next)
+        const nextIsUserID = REGEX.DISCORD_USER.test(next)
+        const nextIsAmount = REGEX.AMOUNT.test(next)
         const nextIsNotUserOrAmount = nextIsUserID ? nextIsAmount : !nextIsAmount
         if (nextIsNotUserOrAmount) return null
         argsObj.recipientIDs = argsObj.recipientIDs || []
@@ -50,19 +44,19 @@ export class Tip {
       }
 
       if (!recipient && classifierMatch) {
-        if (!amountRE.test(next)) return null
+        if (!REGEX.AMOUNT.test(next)) return null
         argsObj.classifier = classifierMatch.groups.classifier
       }
 
       if (isAmount) {
-        const isToken = next && tokenRE.test(next)
+        const isToken = next && REGEX.TOKEN.test(next)
         if (!isToken) return null
         argsObj.amount = curr === 'all' ? curr : expandSuffixedNum(curr)
         argsObj.token = next
         continue
       }
 
-      if (!recipient && modifierRE.test(curr)) {
+      if (!recipient && REGEX.TIP_MODIFIER.test(curr)) {
         argsObj.modifier = curr
       }
     }

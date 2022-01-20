@@ -8,12 +8,7 @@ import { server, validateAccount, txnOpts, sendPayment, expertTxnURL } from '../
 import { withdraw } from '../wallet/index.js'
 import { walletKeypair } from '../wallet/index.js'
 import { logger } from '../lib/logger.js'
-
-
-const publicKeyRE = /^G[A-Z0-9]{55}$/
-const amountRE = /^\d+.?\d*[k|m|b]?$|all?\b/i
-const tokenRE = /^[a-z]+/i
-const memoRE = /\S+/
+import * as REGEX from '../lib/regexes.js'
 
 
 export class WithdrawalRequest {
@@ -27,24 +22,24 @@ export class WithdrawalRequest {
       let next = args[i + 1]
       argsObj = argsObj || {}
 
-      let amt = curr.match(amountRE)
+      let amt = curr.match(REGEX.AMOUNT)
 
       if (i === 0 && !amt) return null
 
       // Memos might match as amt so check if we already have an amount.
       if (amt && !argsObj.amount) {
-        const isToken = next && tokenRE.test(next)
+        const isToken = next && REGEX.TOKEN.test(next)
         if (!isToken) return null
         argsObj.amount = curr === 'all' ? curr : expandSuffixedNum(curr)
         argsObj.token = next
         continue
       }
 
-      const address = curr.match(publicKeyRE)
+      const address = curr.match(REGEX.STELLAR_PUBLICKEY)
       if (address) {
         argsObj.address = address[0]
 
-        if (next && memoRE.test(next)) {
+        if (next && REGEX.STELLAR_MEMO.test(next)) {
           argsObj.memo = next
           continue
         }
