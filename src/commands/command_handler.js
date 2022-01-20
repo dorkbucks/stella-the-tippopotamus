@@ -49,7 +49,7 @@ function messageCreateHandler () {
     const result = await cmd.call(
       sender,
       args,
-      { recipient, server, channel }
+      { recipient, server, channel, author }
     )
 
     const send = channelType === 'DM' ? author.send.bind(author) : msg.reply.bind(msg)

@@ -1,4 +1,5 @@
 import { Asset, Memo, Keypair } from 'stellar-sdk'
+import { MessageEmbed } from 'discord.js'
 
 import { BigNumber } from '../lib/proxied_bignumber.js'
 import { tokens } from '../tokens/index.js'
@@ -97,7 +98,7 @@ export class WithdrawalRequest {
     return true
   }
 
-  async call (sender, args) {
+  async call (sender, args, { author }) {
     args = this.parseArgs(args)
 
     try {
@@ -112,19 +113,27 @@ export class WithdrawalRequest {
       args.amount = sender.balances[tokenName]
     }
 
-    try {
-      const result = await withdraw(sender, args)
-      const txLink = expertTxnURL(result.hash)
-      return { messages: [{
-        heading: `${tokenName} withdrawal successful`,
-        body: `[View the transaction on Stellar Expert](${txLink})`
-      }]}
-    } catch (e) {
-      logger.error(e, 'Encountered an error trying to withdraw')
-      return { messages: [{
-        heading: 'Something went wrong.',
-        body: `Error message: **${e.message}**`
-      }]}
-    }
+    withdraw(sender, args)
+      .then(({ hash }) => {
+        logger.info('Withdraw promise?');
+        const txLink = expertTxnURL(hash)
+        const embed = new MessageEmbed()
+              .setColor('#ff9900')
+              .setAuthor(`${tokenName} withdrawal successful`)
+              .setDescription(`[View the transaction on Stellar Expert](${txLink})`)
+        return author.send({ embeds: [embed] })
+      })
+      .catch((err) => {
+        logger.error(err, 'Encountered an error trying to withdraw')
+        const embed = new MessageEmbed()
+              .setColor('#ff9900')
+              .setAuthor(`Something went wrong.`)
+              .setDescription(`Error message: **${e.message}**`)
+        return author.send({ embeds: [embed] })
+      })
+
+    return { messages: [{
+      body: `Your **${tokenName}** withdrawal has been queued. I'll send you another message once it's been processed.`,
+    }]}
   }
 }
