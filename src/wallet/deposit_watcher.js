@@ -43,15 +43,14 @@ export function depositHandler (address, depositsCollection, Account) {
       paging_token
     } = message
 
+    if (type !== 'payment' || to !== address || asset_type === 'native' || !transaction_successful) {
+      return
+    }
+
     logger.info(
       { type, to, from, amount, asset_type, asset_code, transaction_hash },
       'Received a transaction'
     )
-
-    if (type !== 'payment' || to !== address || asset_type === 'native' || !transaction_successful) {
-      logger.info(`Not a transaction we're interested in. Bailing`)
-      return
-    }
 
     const processedDeposit = await depositsCollection.findOne({ txnHash: transaction_hash })
     if (processedDeposit) {
