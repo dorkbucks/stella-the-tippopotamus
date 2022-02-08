@@ -112,7 +112,7 @@ export class Tip {
     const { emoji } = logo
     const minimumTip = BigNumber(_minimumTip)
 
-    if (recipientIDs.includes(sender._id) || recipient._id === sender._id) {
+    if (recipientIDs.includes(sender._id) || recipient?._id === sender._id) {
       return { messages: [{ body: `You can't tip yourself` }] }
     }
 
