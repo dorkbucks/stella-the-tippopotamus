@@ -16,7 +16,7 @@ export class Account {
       const user = await bot.users.fetch(acctData.id)
       const username = user.username
       const avatar = user.avatarURL()
-      account = new Account({ ...acctData, username, avatar }, tokens)
+      account = new Account({ id: acctData.id, username, avatar }, tokens)
       await accountsCollection.insertOne(account)
       return account
     }
