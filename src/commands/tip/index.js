@@ -7,7 +7,7 @@ import { transformAndValidateAccounts } from './transformAndValidateAccounts.js'
 import { transformAndValidateAmount } from './transformAndValidateAmount.js'
 import { updateAccountBalances } from './updateAccountBalances.js'
 import { sendSuccessMessage } from './sendSuccessMessage.js'
-import { errorHandler } from './errorHandler.js'
+import { errorHandler } from '../errorHandler.js'
 
 
 const tip = composeAsync(

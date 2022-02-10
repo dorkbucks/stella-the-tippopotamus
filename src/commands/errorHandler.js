@@ -1,6 +1,6 @@
 import { MessageEmbed } from 'discord.js'
 
-import { logger } from '../../lib/logger.js'
+import { logger } from '../lib/logger.js'
 
 
 export function errorHandler (message) {
