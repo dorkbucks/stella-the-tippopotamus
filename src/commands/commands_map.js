@@ -1,15 +1,15 @@
-import { Tip } from './tip.js'
-import { Balance } from './balance.js'
-import { DepositRequest } from './deposit.js'
-import { WithdrawalRequest } from './withdraw.js'
-import { Whos } from './whos.js'
-import { Help } from './help.js'
+import * as tip from './tip/index.js'
+import * as balance from './balance/index.js'
+import * as deposit from './deposit/index.js'
+import * as withdraw from './withdraw/index.js'
+import * as whos from './whos/index.js'
+import * as help from './help/index.js'
 
 
 export const commands = new Map()
-commands.set('tip', Tip)
-commands.set('bal', Balance)
-commands.set('deposit', DepositRequest)
-commands.set('withdraw', WithdrawalRequest)
-commands.set('whos', Whos)
-commands.set('help', Help)
+commands.set('tip', tip)
+commands.set('bal', balance)
+commands.set('withdraw', withdraw)
+commands.set('whos', whos)
+commands.set('deposit', deposit)
+commands.set('help', help)
