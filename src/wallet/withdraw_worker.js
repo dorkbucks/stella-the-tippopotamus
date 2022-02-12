@@ -2,36 +2,28 @@ import { parentPort, workerData } from 'worker_threads'
 import { Asset, Memo, Keypair } from 'stellar-sdk'
 
 import { Account } from '../lib/account.js'
-import { tokens } from '../tokens/index.js'
+import { BigNumber } from '../lib/proxied_bignumber.js'
 import { server, txnOpts, sendPayment } from '../stellar/index.js'
 import { walletKeypair } from './config.js'
 import { getCollection } from '../db/index.js'
 
 
-const { amount, token, address, memo } = workerData
-const [ tokenName, tokenCode, issuer ] = tokens.get(token, 'name', 'code', 'issuer')
+const { token, address } = workerData
 const account = new Account(workerData.account)
-const asset = new Asset(tokenCode, issuer)
-
-let _memo
-try {
-  _memo = Memo.id(memo)
-} catch {
-  try {
-    _memo = Memo.text(memo)
-  } catch {}
-}
+const memo = workerData.memo && Object.setPrototypeOf(workerData.memo, Memo.prototype)
+const amount = Object.setPrototypeOf(workerData.amount, BigNumber.prototype)
+const asset = new Asset(token.code, token.issuer)
 
 const result = await sendPayment(
   { server, txnOpts },
   asset,
   walletKeypair,
   Keypair.fromPublicKey(address),
-  amount,
-  _memo
+  amount.toNumber(),
+  memo
 )
 
-const debitedAccount = account.debit(tokenName, amount)
+const debitedAccount = account.debit(token.name, amount)
 const withdrawalsCollection = await getCollection('withdrawals')
 const withdrawal = {
   accountID: account._id,
