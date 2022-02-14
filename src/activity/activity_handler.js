@@ -3,6 +3,8 @@ import { Account } from '../lib/account.js'
 import { logger } from '../lib/logger.js'
 
 
+const channelTypes = ['GUILD_TEXT', 'GUILD_PUBLIC_THREAD']
+
 function isAcceptableMessage (text) {
   text = text.toLowerCase()
   return text.length > 1 && text !== 'ty'
@@ -12,7 +14,7 @@ function messageCreateHandler (collection) {
   return async function onMessageCreate (msg) {
     const { content, author, createdAt, id } = msg
 
-    if (msg.channel.type !== 'GUILD_TEXT' ||  author.bot) return
+    if (!channelTypes.includes(msg.channel.type) || author.bot) return
     if (!isAcceptableMessage(content)) return
 
     const update = {

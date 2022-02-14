@@ -10,7 +10,7 @@ const lf = new Intl.ListFormat('en')
 const ucFirst = (str) =>  str.charAt(0).toUpperCase() + str.slice(1)
 
 const classifiers = ['active']
-export const channelTypes = ['GUILD_TEXT']
+export const channelTypes = ['GUILD_TEXT', 'GUILD_PUBLIC_THREAD']
 
 export async function execute (message) {
   const { content, guild: server, channel } = message

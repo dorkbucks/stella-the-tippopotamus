@@ -135,7 +135,7 @@ _or reply to the recipient with:_
 Type \`.help help\` for a list of topics.
 `
 
-export const channelTypes = ['GUILD_TEXT', 'DM']
+export const channelTypes = ['DM', 'GUILD_TEXT', 'GUILD_PUBLIC_THREAD']
 
 export async function execute (message) {
   let topic = parseCommand(SIGIL, message.content).args[0] || 'index'

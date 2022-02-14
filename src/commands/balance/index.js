@@ -3,7 +3,7 @@ import { Account } from '../../lib/account.js'
 import { tokens } from '../../tokens/index.js'
 
 
-export const channelTypes = ['DM', 'GUILD_TEXT']
+export const channelTypes = ['DM', 'GUILD_TEXT', 'GUILD_PUBLIC_THREAD']
 
 export async function execute (message) {
   const { balances, username, avatar } = await Account.getOrCreate(message.author)
