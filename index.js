@@ -7,12 +7,8 @@ import { startCommandHandler } from './src/commands/index.js'
 
 
 const {
-  NODE_ENV,
   DISCORD_CLIENT_ID,
-  DISCORD_TOKEN,
-  DISCORD_GUILD_ID,
-  SIGIL,
-  CHANNEL_ID
+  DISCORD_TOKEN
 } = env
 
 await startDepositWatcher()

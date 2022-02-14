@@ -1,5 +1,3 @@
-import { Server } from 'stellar-sdk'
-
 import { server } from '../stellar/index.js'
 import { Account } from '../lib/account.js'
 import { tokens } from '../tokens/index.js'
@@ -37,10 +35,8 @@ export function depositHandler (address, depositsCollection, Account) {
       amount,
       asset_type,
       asset_code,
-      created_at,
       transaction_successful,
-      transaction_hash,
-      paging_token
+      transaction_hash
     } = message
 
     if (type !== 'payment' || to !== address || asset_type === 'native' || !transaction_successful) {
