@@ -19,7 +19,7 @@ const result = await sendPayment(
   asset,
   walletKeypair,
   Keypair.fromPublicKey(address),
-  amount.toNumber(),
+  amount,
   memo
 )
 
