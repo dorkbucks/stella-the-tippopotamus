@@ -56,17 +56,20 @@ export function parseCommandArgs (args) {
 
     if (isAmount) {
       const nextIsModifier = REGEX.TIP_MODIFIER.test(next)
-      const isToken = next && !nextIsModifier && REGEX.TOKEN.test(next)
-      if (!isToken) {
+      const nextIsToken = next && !nextIsModifier && REGEX.TOKEN.test(next)
+
+      if (!nextIsToken) {
         throw new Error(`I don't understand what you mean`)
       }
+
       args.amount = curr
       args.token = next
-      continue
-    }
 
-    if (!recipient && REGEX.TIP_MODIFIER.test(curr)) {
-      args.modifier = curr
+      const nextNext = commandArgs[i + 2]
+      const nextNextIsModifier = REGEX.TIP_MODIFIER.test(nextNext)
+      if (!recipient && nextNextIsModifier) {
+        args.modifier = nextNext
+      }
     }
   }
 

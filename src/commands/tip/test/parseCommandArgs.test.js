@@ -145,3 +145,25 @@ t.test('Recipient passed in', ({ end }) => {
 
   end()
 })
+
+t.test('Ignore extra text at end', ({ end }) => {
+  const theories = [
+    {
+      args: { commandArgs: [`<@!${id1}>`, '100', 'hippo', 'each', 'happy', 'birthday'] },
+      expected: { recipients: [id1], amount: '100', token: 'hippo', modifier: 'each'}
+    },
+    {
+      // each modifier should only be valid after a token
+      args: { commandArgs: [`<@!${id1}>`, '200', 'hippo', 'happy', 'birthday', 'each'] },
+      expected: { recipients: [id1], amount: '200', token: 'hippo'}
+    },
+    {
+      args: { recipient: { id: id1 }, commandArgs: ['300', 'hippo', 'happy', 'birthday'] },
+      expected: { recipients: [{ id: id1 }], amount: '300', token: 'hippo'}
+    }
+  ]
+  theories.forEach(({ args, expected }) => {
+    t.same(parseCommandArgs(args), expected)
+  })
+  end()
+})
