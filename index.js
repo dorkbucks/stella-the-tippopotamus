@@ -1,6 +1,7 @@
 import { env } from './src/lib/env.js'
 import { bot } from './src/lib/bot.js'
 import { logger } from './src/lib/logger.js'
+import { newServerInitializer } from './src/config/index.js'
 import { startActivityHandler } from './src/activity/index.js'
 import { startDepositWatcher } from './src/wallet/deposit_watcher.js'
 import { startCommandHandler } from './src/commands/index.js'
@@ -12,6 +13,7 @@ const {
 } = env
 
 await startDepositWatcher()
+newServerInitializer(bot)
 
 bot.once('ready', async () => {
   logger.info(`Tipbot logged in as ${DISCORD_CLIENT_ID}`)
