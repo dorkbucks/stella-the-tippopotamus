@@ -4,6 +4,7 @@ import * as deposit from './deposit/index.js'
 import * as withdraw from './withdraw/index.js'
 import * as whos from './whos/index.js'
 import * as help from './help/index.js'
+import * as config from './config/index.js'
 
 
 export const commands = new Map()
@@ -13,3 +14,4 @@ commands.set('withdraw', withdraw)
 commands.set('whos', whos)
 commands.set('deposit', deposit)
 commands.set('help', help)
+commands.set('config', config)
