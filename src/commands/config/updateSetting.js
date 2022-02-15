@@ -11,17 +11,17 @@ export async function updateSetting (args) {
   const config = await serverConfigs.findOne({ serverID })
 
   let embed = new MessageEmbed().setColor('#ff9900')
-  let messageText = ''
+  let messageText
 
   if (!setting && !value) {
     messageText = buildText(messages.help, config)
   } else if (value) {
     await serverConfigs.updateOne({ serverID }, { $set: { [setting]: value } })
-    messageText = `**${setting}** is now set to \`${value}\``
+    messageText = buildText(messages.setValue, { setting, value })
   } else {
     const currentValue = config[setting]
     if (!currentValue) return
-    messageText = `**${setting}** is currently set to \`${currentValue}\``
+    messageText = buildText(messages.getValue, { setting, value: currentValue })
   }
 
   embed.setDescription(messageText)

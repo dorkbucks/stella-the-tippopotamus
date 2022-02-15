@@ -12,3 +12,11 @@ Set the maximum number of recipients in a single tip (currently \`{{maxTipped}}\
 **{{prefix}}config activeMinutes** \`number\`
 Set the number of minutes wherein a member has sent a message to be considered **active** (currently \`{{activeMinutes}}\`)
 `
+
+export const setValue = `
+**{{setting}}** is now set to \`{{value}}\`
+`
+
+export const getValue = `
+**{{setting}}** is currently set to \`{{value}}\`
+`
