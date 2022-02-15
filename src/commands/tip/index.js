@@ -20,5 +20,6 @@ const tip = composeAsync(
   updateAccountBalances,
   sendSuccessMessage
 )
+export { help } from './messages.js'
 export const channelTypes = ['GUILD_TEXT', 'GUILD_PUBLIC_THREAD']
 export const execute = (args) => tip(args).catch(errorHandler(args.message))

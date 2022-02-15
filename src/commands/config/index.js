@@ -13,5 +13,6 @@ const config = composeAsync(
   updateSetting
 )
 
+export { help } from './messages.js'
 export const channelTypes = ['GUILD_TEXT', 'GUILD_PUBLIC_THREAD']
 export const execute = (args) => config(args).catch(errorHandler(args.message))

@@ -20,5 +20,6 @@ const withdraw = composeAsync(
   transformAndValidateAmount,
   performWithdrawal
 )
+export { help } from './messages.js'
 export const channelTypes = ['DM']
 export const execute = (args) => withdraw(args).catch(errorHandler(args.message))

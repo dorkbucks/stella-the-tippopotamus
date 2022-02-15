@@ -10,8 +10,8 @@ const tokenList = tokens.list('name', 'logo').reduce((str, { name, logo }) => {
   return str
 }, '')
 
+export { help } from './messages.js'
 export const channelTypes = ['DM']
-
 export async function execute ({ message }) {
   const memo = message.author.id
   const url = `web+stellar:pay?destination=${walletAddress}&memo=${memo}`
