@@ -1,5 +1,5 @@
 import { composeAsync } from '../../lib/composeAsync.js'
-import { extractArgsFromMessage } from './extractArgsFromMessage.js'
+import { extractArgs } from './extractArgs.js'
 import { parseCommandArgs } from './parseCommandArgs.js'
 import { transformAndValidateToken } from './transformAndValidateToken.js'
 import { transformAndValidateClassifiers } from './transformAndValidateClassifiers.js'
@@ -11,7 +11,7 @@ import { errorHandler } from '../errorHandler.js'
 
 
 const tip = composeAsync(
-  extractArgsFromMessage,
+  extractArgs,
   parseCommandArgs,
   transformAndValidateToken,
   transformAndValidateClassifiers,
@@ -21,4 +21,4 @@ const tip = composeAsync(
   sendSuccessMessage
 )
 export const channelTypes = ['GUILD_TEXT', 'GUILD_PUBLIC_THREAD']
-export const execute = (message) => tip(message).catch(errorHandler(message))
+export const execute = (args) => tip(args).catch(errorHandler(args.message))

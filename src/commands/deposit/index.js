@@ -12,7 +12,7 @@ const tokenList = tokens.list('name', 'logo').reduce((str, { name, logo }) => {
 
 export const channelTypes = ['DM']
 
-export async function execute (message) {
+export async function execute ({ message }) {
   const memo = message.author.id
   const url = `web+stellar:pay?destination=${walletAddress}&memo=${memo}`
   const qrCodeDataURI = await QRCode.toDataURL(url)

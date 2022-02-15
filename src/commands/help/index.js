@@ -1,11 +1,9 @@
 import { MessageEmbed } from 'discord.js'
 
-import { env } from '../../lib/env.js'
-import { parseCommand } from '../parse_command.js'
 import { tokens } from '../../tokens/index.js'
+import { defaultConfig } from '../../config/index.js'
 
 
-const { SIGIL } = env
 const TOKENS = tokens.list('name', 'logo', 'aliases')
 
 function formatTokens (tokenList) {
@@ -137,9 +135,10 @@ Type \`.help help\` for a list of topics.
 
 export const channelTypes = ['DM', 'GUILD_TEXT', 'GUILD_PUBLIC_THREAD']
 
-export async function execute (message) {
-  let topic = parseCommand(SIGIL, message.content).args[0] || 'index'
-  topic = topic.charAt(0) === SIGIL ? topic.slice(SIGIL.length) : topic
+export async function execute ({ commandArgs, serverConfig, message }) {
+  let topic = commandArgs[0] || 'index'
+  const { prefix } = serverConfig || defaultConfig
+  topic = topic.charAt(0) === prefix ? topic.slice(prefix.length) : topic
   const body = help[topic] || help.huh
   const embed = new MessageEmbed()
         .setColor('#ff9900')

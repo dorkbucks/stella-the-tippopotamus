@@ -1,13 +1,10 @@
-import { env } from '../../lib/env.js'
-import { parseCommand } from '../parse_command.js'
-
-
-export function extractArgsFromMessage (message) {
+export function extractArgs ({ commandArgs, serverConfig, message }) {
   let args = {
     sender: message.author,
     server: message.guild,
     channel: message.channel,
-    commandArgs: parseCommand(env.SIGIL, message.content).args,
+    commandArgs,
+    serverConfig,
     message
   }
 

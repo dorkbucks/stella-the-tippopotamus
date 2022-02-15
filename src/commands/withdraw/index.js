@@ -1,5 +1,5 @@
 import { composeAsync } from '../../lib/composeAsync.js'
-import { extractArgsFromMessage } from './extractArgsFromMessage.js'
+import { extractArgs } from './extractArgs.js'
 import { parseCommandArgs } from './parseCommandArgs.js'
 import { validateAddress } from './validateAddress.js'
 import { transformAndValidateMemo } from './transformAndValidateMemo.js'
@@ -11,7 +11,7 @@ import { errorHandler } from '../errorHandler.js'
 
 
 const withdraw = composeAsync(
-  extractArgsFromMessage,
+  extractArgs,
   parseCommandArgs,
   transformAndValidateToken,
   validateAddress,
@@ -21,4 +21,4 @@ const withdraw = composeAsync(
   performWithdrawal
 )
 export const channelTypes = ['DM']
-export const execute = (message) => withdraw(message).catch(errorHandler(message))
+export const execute = (args) => withdraw(args).catch(errorHandler(args.message))

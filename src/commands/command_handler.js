@@ -1,21 +1,31 @@
 import { env } from '../lib/env.js'
 import { parseCommand } from './parse_command.js'
 import { commands } from './commands_map.js'
+import { getCollection } from '../db/index.js'
 
-
-const { DISCORD_CLIENT_ID, SIGIL } = env
 
 async function onMessageCreate (message) {
   const { author, content, channel } = message
 
-  if (author.id === DISCORD_CLIENT_ID) return
-  if (!content.startsWith(SIGIL)) return
+  if (author.id === env.DISCORD_CLIENT_ID) return
 
-  const command = commands.get(parseCommand(SIGIL, content).command)
+  let serverConfig
+  let prefix = '.'
 
-  if (!command || !command.channelTypes.includes(channel.type)) return
+  if (channel.type !== 'DM') {
+    const serverConfigs = await getCollection('serverConfigs')
+    serverConfig = await serverConfigs.findOne({ serverID: message.guildId })
+    prefix = serverConfig.prefix
+  }
 
-  return command && command.execute(message)
+  if (!content.startsWith(prefix)) return
+
+  const { command, args: commandArgs } = parseCommand(prefix, content)
+  const cmd = commands.get(command)
+
+  if (!cmd || !cmd.channelTypes.includes(channel.type)) return
+
+  return cmd && cmd.execute({ commandArgs, serverConfig, message })
 }
 
 export async function startCommandHandler (bot) {

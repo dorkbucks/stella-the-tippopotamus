@@ -5,7 +5,7 @@ import { tokens } from '../../tokens/index.js'
 
 export const channelTypes = ['DM', 'GUILD_TEXT', 'GUILD_PUBLIC_THREAD']
 
-export async function execute (message) {
+export async function execute ({ message }) {
   const { balances, username, avatar } = await Account.getOrCreate(message.author)
   const balancesString = Object.keys(balances).sort((a, b) => a.localeCompare(b)).reduce((str, name) => {
     const [{ emoji }] = tokens.get(name, 'logo')

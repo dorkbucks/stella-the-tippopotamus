@@ -1,7 +1,7 @@
 import { getCollection } from '../db/index.js'
 
 
-const defaults = {
+export const defaultConfig = {
   prefix: '.',
   maxTipped: 40,
   activeMinutes: 30
@@ -12,7 +12,7 @@ export async function newServerInitializer (bot) {
 
   bot.on('guildCreate', (guild) => {
     const serverID = guild.id
-    const config = { ...defaults, serverID }
+    const config = { ...defaultConfig, serverID }
 
     serverConfigs.updateOne(
       { serverID },

@@ -12,9 +12,9 @@ const ucFirst = (str) =>  str.charAt(0).toUpperCase() + str.slice(1)
 const classifiers = ['active']
 export const channelTypes = ['GUILD_TEXT', 'GUILD_PUBLIC_THREAD']
 
-export async function execute (message) {
-  const { content, guild: server, channel } = message
-  const classifier = parseCommand(env.SIGIL, content.toLowerCase()).args[0]
+export async function execute ({ commandArgs, message }) {
+  const { guild: server, channel } = message
+  const classifier = commandArgs[0]
 
   let embed = new MessageEmbed().setColor('#ff9900')
 
