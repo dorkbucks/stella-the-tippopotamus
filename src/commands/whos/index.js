@@ -1,7 +1,5 @@
 import { MessageEmbed } from 'discord.js'
 
-import { env } from '../../lib/env.js'
-import { parseCommand } from '.././parse_command.js'
 import { getActiveUsers } from '../../activity/index.js'
 import { getCollection } from '../../db/index.js'
 
