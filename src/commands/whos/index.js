@@ -12,7 +12,7 @@ const ucFirst = (str) =>  str.charAt(0).toUpperCase() + str.slice(1)
 const classifiers = ['active']
 export const channelTypes = ['GUILD_TEXT', 'GUILD_PUBLIC_THREAD']
 
-export async function execute ({ commandArgs, message }) {
+export async function execute ({ commandArgs, serverConfig, message }) {
   const { guild: server, channel } = message
   const classifier = commandArgs[0]
 
@@ -24,7 +24,13 @@ export async function execute ({ commandArgs, message }) {
   }
 
   const accountsCollection = await getCollection('accounts')
-  const activeUsers = await getActiveUsers(accountsCollection, server.id, channel.id, 30, 30)
+  const activeUsers = await getActiveUsers(
+    accountsCollection,
+    server.id,
+    channel.id,
+    parseInt(serverConfig.activeMinutes),
+    parseInt(serverConfig.maxTipped)
+  )
   const activeUsersList = lf.format(activeUsers.map(({ _id }) => `<@${_id}>`))
 
   const heading = `${ucFirst(classifier)} users in this channel`
