@@ -1,6 +1,8 @@
 import { MessageEmbed } from 'discord.js'
 
 import { getCollection } from '../../db/index.js'
+import { buildText } from '../../lib/buildText.js'
+import * as messages from './messages.js'
 
 
 export async function updateSetting (args) {
@@ -11,7 +13,9 @@ export async function updateSetting (args) {
   let embed = new MessageEmbed().setColor('#ff9900')
   let messageText = ''
 
-  if (value) {
+  if (!setting && !value) {
+    messageText = buildText(messages.help, config)
+  } else if (value) {
     await serverConfigs.updateOne({ serverID }, { $set: { [setting]: value } })
     messageText = `**${setting}** is now set to \`${value}\``
   } else {
