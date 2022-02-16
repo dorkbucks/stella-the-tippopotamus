@@ -2,6 +2,7 @@ import { BigNumber } from './proxied_bignumber.js'
 import { bot } from './bot.js'
 import { getCollection } from '../db/index.js'
 import { tokens } from '../tokens/index.js'
+import * as wallet from '../wallet/index.js'
 
 
 const TOKENS = tokens.list('name')
@@ -67,5 +68,26 @@ export class Account {
     const accountsCollection = await getCollection('accounts')
     await accountsCollection.updateOne({ _id: this._id }, { $set: this })
     return this
+  }
+
+  async withdraw({ amount, token, address, memo }) {
+    const { hash, created_at } = await wallet.withdraw(amount, token, address, memo)
+    const tokenName = token.name
+    const debitedAccount = this.debit(tokenName, amount)
+    const withdrawal = {
+      amount,
+      tokenName,
+      to: address,
+      transactionHash: hash,
+      date: created_at
+    }
+
+    const accountsCollection = await getCollection('accounts')
+    await accountsCollection.updateOne({ _id: debitedAccount._id }, {
+      $set: { [`balances.${tokenName}`]: debitedAccount.balances[tokenName] },
+      $push: { withdrawals: withdrawal }
+    })
+
+    return withdrawal
   }
 }
