@@ -83,9 +83,10 @@ export const channelTypes = ['DM', 'GUILD_TEXT', 'GUILD_PUBLIC_THREAD']
 
 export async function execute ({ commandArgs, serverConfig, message }) {
   let topic = commandArgs[0] || 'index'
-  const { prefix } = serverConfig || defaultConfig
+  const config = serverConfig || defaultConfig
+  const { prefix } = config
   topic = topic.charAt(0) === prefix ? topic.slice(prefix.length) : topic
-  const body = buildText(help[topic] || help.huh, serverConfig)
+  const body = buildText(help[topic] || help.huh, config)
   const embed = new MessageEmbed()
         .setColor('#ff9900')
         .setDescription(body)
