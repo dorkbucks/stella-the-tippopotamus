@@ -1,5 +1,7 @@
 import { Memo } from 'stellar-sdk'
 
+import { CommandError } from '../errors.js'
+
 
 export function transformAndValidateMemo (args) {
   const { memo } = args
@@ -13,7 +15,7 @@ export function transformAndValidateMemo (args) {
     try {
       _memo = Memo.text(memo)
     } catch {
-      throw new Error('Memo is invalid')
+      throw new CommandError('Memo is invalid')
     }
   }
 

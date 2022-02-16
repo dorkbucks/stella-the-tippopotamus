@@ -1,4 +1,5 @@
 import * as REGEX from '../../lib/regexes.js'
+import { CommandError } from '../errors.js'
 
 
 export function parseCommandArgs (args) {
@@ -6,7 +7,7 @@ export function parseCommandArgs (args) {
   const { commandArgs, recipient } = args
 
   if (!commandArgs.length) {
-    throw new Error('No command arguments')
+    throw new CommandError('No command arguments')
   }
 
   for (let i = 0, len = commandArgs.length; i < len; i++) {
@@ -20,7 +21,7 @@ export function parseCommandArgs (args) {
     if (recipient) {
       // Recipient was passed in, amount should be first
       if (i === 0 && !isAmount) {
-        throw new Error(`I don't understand what you mean`)
+        throw new CommandError(`I don't understand what you mean`)
       }
 
       args.recipients = args.recipients || []
@@ -32,7 +33,7 @@ export function parseCommandArgs (args) {
     } else {
       // No recipient, user ID(s) or classifier should be first
       if (i === 0 && !(userMatch || classifierMatch)) {
-        throw new Error(`I don't understand what you mean`)
+        throw new CommandError(`I don't understand what you mean`)
       }
     }
 
@@ -41,7 +42,7 @@ export function parseCommandArgs (args) {
       const nextIsAmount = REGEX.AMOUNT.test(next)
       const nextIsNotUserOrAmount = nextIsUserID ? nextIsAmount : !nextIsAmount
       if (nextIsNotUserOrAmount) {
-        throw new Error(`I don't understand what you mean`)
+        throw new CommandError(`I don't understand what you mean`)
       }
       args.recipients = args.recipients || []
       args.recipients.push(userMatch.groups.id)
@@ -49,7 +50,7 @@ export function parseCommandArgs (args) {
 
     if (!recipient && classifierMatch) {
       if (!REGEX.AMOUNT.test(next)) {
-        throw new Error(`I don't understand what you mean`)
+        throw new CommandError(`I don't understand what you mean`)
       }
       args.classifier = classifierMatch.groups.classifier
     }
@@ -59,7 +60,7 @@ export function parseCommandArgs (args) {
       const nextIsToken = next && !nextIsModifier && REGEX.TOKEN.test(next)
 
       if (!nextIsToken) {
-        throw new Error(`I don't understand what you mean`)
+        throw new CommandError(`I don't understand what you mean`)
       }
 
       args.amount = curr

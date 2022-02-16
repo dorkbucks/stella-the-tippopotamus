@@ -1,5 +1,6 @@
 import { BigNumber } from '../../lib/proxied_bignumber.js'
 import { expandSuffixedNum } from '../../lib/expand_suffixed_num.js'
+import { CommandError } from '../errors.js'
 
 
 export function transformAndValidateAmount (args) {
@@ -9,11 +10,11 @@ export function transformAndValidateAmount (args) {
   amount = BigNumber(amount)
 
   if (!sender.balanceSufficient(token.name, amount)) {
-    throw new Error(`You can't afford this withdrawal`)
+    throw new CommandError(`You can't afford this withdrawal`)
   }
 
   if (amount.lte(0)) {
-    throw new Error(`You can't withdraw **≤ 0**`)
+    throw new CommandError(`You can't withdraw **≤ 0**`)
   }
 
   return { ...args, amount }

@@ -1,4 +1,5 @@
 import * as REGEX from '../../lib/regexes.js'
+import { CommandError } from '../errors.js'
 
 
 export function parseCommandArgs (args) {
@@ -6,7 +7,7 @@ export function parseCommandArgs (args) {
   const { commandArgs } = args
 
   if (!commandArgs.length) {
-    throw new Error('No command arguments')
+    throw new CommandError('No command arguments')
   }
 
   for (let i = 0, len = commandArgs.length; i < len; i++) {
@@ -16,14 +17,14 @@ export function parseCommandArgs (args) {
     let amt = curr.match(REGEX.AMOUNT)
 
     if (i === 0 && !amt) {
-      throw new Error(`I don't understand what you mean`)
+      throw new CommandError(`I don't understand what you mean`)
     }
 
     // Memos might match as amt so check if we already have an amount.
     if (amt && !args.amount) {
       const isToken = next && REGEX.TOKEN.test(next) && !REGEX.STELLAR_PUBLICKEY.test(next)
       if (!isToken) {
-        throw new Error(`I don't understand what you mean`)
+        throw new CommandError(`I don't understand what you mean`)
       }
       args.amount = curr
       args.token = next

@@ -1,5 +1,6 @@
 import { expandSuffixedNum } from '../../lib/expand_suffixed_num.js'
 import { calculateAmounts } from './calculateAmounts.js'
+import { CommandError } from '../errors.js'
 
 
 export function transformAndValidateAmount (args) {
@@ -14,19 +15,19 @@ export function transformAndValidateAmount (args) {
   })
 
   if (isAll && modifier === 'each') {
-    throw new Error(`You can't use **all** with **each**`)
+    throw new CommandError(`You can't use **all** with **each**`)
   }
 
   if (total.lte(0)) {
-    throw new Error(`You can't tip **≤ 0**`)
+    throw new CommandError(`You can't tip **≤ 0**`)
   }
 
   if (total.lt(minimumTip)) {
-    throw new Error(`The minimum ${emoji} **${tokenName}** tip is **${minimumTip}** per person`)
+    throw new CommandError(`The minimum ${emoji} **${tokenName}** tip is **${minimumTip}** per person`)
   }
 
   if (!sender.balanceSufficient(tokenName, total)) {
-    throw new Error(`You can't afford this tip`)
+    throw new CommandError(`You can't afford this tip`)
   }
 
   return {

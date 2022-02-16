@@ -1,5 +1,6 @@
 import { Account } from '../../lib/account.js'
 import { uniquify } from '../../lib/uniquify.js'
+import { CommandError } from '../errors.js'
 
 
 export async function transformAndValidateAccounts (args) {
@@ -7,7 +8,7 @@ export async function transformAndValidateAccounts (args) {
   recipients = uniquify(recipients)
 
   for (let r of recipients) {
-    if ((r?.id || r) === sender.id) throw new Error(`You can't tip yourself`)
+    if ((r?.id || r) === sender.id) throw new CommandError(`You can't tip yourself`)
   }
 
   [sender, ...recipients] = await Promise.all(
