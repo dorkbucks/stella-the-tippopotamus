@@ -57,6 +57,7 @@ withdraw
 
 help.index = `
 **Command Overview**
+_Commands in DMs don't require a prefix_
 
 **{{prefix}}bal** _(Text channel and DM)_
 

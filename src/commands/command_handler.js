@@ -10,15 +10,14 @@ async function onMessageCreate (message) {
   if (author.id === env.DISCORD_CLIENT_ID) return
 
   let serverConfig
-  let prefix = '.'
+  let prefix = ''
 
   if (channel.type !== 'DM') {
     const serverConfigs = await getCollection('serverConfigs')
     serverConfig = await serverConfigs.findOne({ serverID: message.guildId })
     prefix = serverConfig.prefix
+    if (!content.startsWith(prefix)) return
   }
-
-  if (!content.startsWith(prefix)) return
 
   const { command, args: commandArgs } = parseCommand(prefix, content)
   const cmd = commands.get(command)

@@ -3,7 +3,7 @@ export const help = `
 Withdraw your tipbot tokens to your Stellar wallet.
 _This command is only available in DMs._
 
-**\`.withdraw <amount> <token> <address> [memo]\`**
+**\`withdraw <amount> <token> <address> [memo]\`**
 
 _<amount>_
 A positive number, "all", or a number suffixed by k, m, or b (i.e. 100k, 10m, 1b).
@@ -19,6 +19,6 @@ Optional memo id or text. The tipbot will try a memo id first then memo text. If
 
 _examples:_
 _\`\`\`
-.withdraw 1000 hippo GCCNM7GCE5WQMRWB4ASK3Y7AYHOBXQZHNSQ4WGZPRMAQNY7GDAGZDORK
+withdraw 1000 hippo GCCNM7GCE5WQMRWB4ASK3Y7AYHOBXQZHNSQ4WGZPRMAQNY7GDAGZDORK
 \`\`\`_
 `
